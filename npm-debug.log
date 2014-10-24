@@ -1,0 +1,106 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'publish',
+1 verbose cli   './' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.32
+4 verbose node symlink C:\Program Files\nodejs\\node.exe
+5 verbose publish [ './' ]
+6 verbose cache add [ './', null ]
+7 verbose cache add name=undefined spec="./" args=["./",null]
+8 verbose parsed url { protocol: null,
+8 verbose parsed url   slashes: null,
+8 verbose parsed url   auth: null,
+8 verbose parsed url   host: null,
+8 verbose parsed url   port: null,
+8 verbose parsed url   hostname: null,
+8 verbose parsed url   hash: null,
+8 verbose parsed url   search: null,
+8 verbose parsed url   query: null,
+8 verbose parsed url   pathname: './',
+8 verbose parsed url   path: './',
+8 verbose parsed url   href: './' }
+9 silly lockFile 0ee6c175- ./
+10 verbose lock ./ C:\Users\akl\AppData\Roaming\npm-cache\0ee6c175-.lock
+11 verbose tar pack [ 'C:\\Users\\akl\\AppData\\Roaming\\npm-cache\\QSocks\\0.0.1\\package.tgz',
+11 verbose tar pack   './' ]
+12 verbose tarball C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package.tgz
+13 verbose folder ./
+14 info prepublish QSocks@0.0.1
+15 silly lockFile 04cb2bca-tar tar://./
+16 verbose lock tar://./ C:\Users\akl\AppData\Roaming\npm-cache\04cb2bca-tar.lock
+17 silly lockFile dc4e2fe9-m-cache-QSocks-0-0-1-package-tgz tar://C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package.tgz
+18 verbose lock tar://C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package.tgz C:\Users\akl\AppData\Roaming\npm-cache\dc4e2fe9-m-cache-QSocks-0-0-1-package-tgz.lock
+19 silly lockFile 04cb2bca-tar tar://./
+20 silly lockFile 04cb2bca-tar tar://./
+21 silly lockFile dc4e2fe9-m-cache-QSocks-0-0-1-package-tgz tar://C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package.tgz
+22 silly lockFile dc4e2fe9-m-cache-QSocks-0-0-1-package-tgz tar://C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package.tgz
+23 silly lockFile b08849e1-g-npm-cache-QSocks-0-0-1-package C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package
+24 verbose lock C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package C:\Users\akl\AppData\Roaming\npm-cache\b08849e1-g-npm-cache-QSocks-0-0-1-package.lock
+25 silly lockFile b08849e1-g-npm-cache-QSocks-0-0-1-package C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package
+26 silly lockFile b08849e1-g-npm-cache-QSocks-0-0-1-package C:\Users\akl\AppData\Roaming\npm-cache\QSocks\0.0.1\package
+27 silly lockFile 0ee6c175- ./
+28 silly lockFile 0ee6c175- ./
+29 silly publish { name: 'QSocks',
+29 silly publish   version: '0.0.1',
+29 silly publish   description: 'A wrapper around the QIX Engine API for node',
+29 silly publish   main: 'qsocks.js',
+29 silly publish   scripts: {},
+29 silly publish   author: { name: 'Alexander Karlsson - akl@qlik.com' },
+29 silly publish   license: 'BSD-2-Clause',
+29 silly publish   dependencies: { ws: '~0.4.32', 'es6-promise': '~2.0.0' },
+29 silly publish   devDependencies: {},
+29 silly publish   repository: { type: 'git', url: 'https://github.com/mindspank/qsocks.git' },
+29 silly publish   keywords: [ 'qlik' ],
+29 silly publish   bugs: { url: 'https://github.com/mindspank/qsocks/issues' },
+29 silly publish   homepage: 'https://github.com/mindspank/qsocks',
+29 silly publish   gitHead: '2f06c3507388b10e9adcab7e85cc0d4d0597bbdb',
+29 silly publish   readme: 'ERROR: No README data found!',
+29 silly publish   _id: 'QSocks@0.0.1',
+29 silly publish   _shasum: '0b21d476682f74f3477b04133f5a3086d27104b1',
+29 silly publish   _from: './' }
+30 verbose request where is /QSocks
+31 verbose request registry https://registry.npmjs.org/
+32 verbose request id f2d9cd17a7f11d7b
+33 verbose url raw /QSocks
+34 verbose url resolving [ 'https://registry.npmjs.org/', './QSocks' ]
+35 verbose url resolved https://registry.npmjs.org/QSocks
+36 verbose request where is https://registry.npmjs.org/QSocks
+37 info trying registry request attempt 1 at 13:20:34
+38 http PUT https://registry.npmjs.org/QSocks
+39 http 403 https://registry.npmjs.org/QSocks
+40 verbose headers { date: 'Thu, 23 Oct 2014 17:20:35 GMT',
+40 verbose headers   server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+40 verbose headers   'content-type': 'application/json',
+40 verbose headers   'cache-control': 'max-age=60',
+40 verbose headers   'content-length': '76',
+40 verbose headers   'accept-ranges': 'bytes',
+40 verbose headers   via: '1.1 varnish',
+40 verbose headers   'x-served-by': 'cache-fra1247-FRA',
+40 verbose headers   'x-cache': 'MISS',
+40 verbose headers   'x-cache-hits': '0',
+40 verbose headers   'x-timer': 'S1414084835.361560,VS0,VE334',
+40 verbose headers   'keep-alive': 'timeout=10, max=50',
+40 verbose headers   connection: 'Keep-Alive' }
+41 error publish Failed PUT 403
+42 error Error: forbidden New packages must have all-lowercase names: QSocks
+42 error     at RegClient.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:308:14)
+42 error     at Request._callback (C:\Program Files\nodejs\node_modules\npm\node_modules\npm-registry-client\lib\request.js:246:65)
+42 error     at Request.self.callback (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:236:22)
+42 error     at Request.emit (events.js:98:17)
+42 error     at Request.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1142:14)
+42 error     at Request.emit (events.js:117:20)
+42 error     at IncomingMessage.<anonymous> (C:\Program Files\nodejs\node_modules\npm\node_modules\request\request.js:1096:12)
+42 error     at IncomingMessage.emit (events.js:117:20)
+42 error     at _stream_readable.js:943:16
+42 error     at process._tickCallback (node.js:419:13)
+43 error If you need help, you may report this *entire* log,
+43 error including the npm and node versions, at:
+43 error     <http://github.com/npm/npm/issues>
+44 error System Windows_NT 6.1.7601
+45 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "publish" "./"
+46 error cwd C:\QlikTech\Demo Team\Lab\QSocks\qsocks
+47 error node -v v0.10.32
+48 error npm -v 1.4.28
+49 verbose exit [ 1, true ]

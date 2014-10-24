@@ -1,5 +1,5 @@
 {
-  "name": "QSocks",
+  "name": "qsocks",
   "version": "0.0.1",
   "description": "A wrapper around the QIX Engine API for node",
   "main": "qsocks.js",
