@@ -11,7 +11,7 @@ var WebSocket = require('ws');
 var Promise = require("es6-promise").Promise;
 
 
-var qSocks = {
+var qsocks = {
 	Doc: doc,
 	Field: field,
 	GenericBookmark: genericBookmark,
@@ -134,4 +134,4 @@ Connection.prototype.create = function(arg) {
 		return null;
 	}
 };
-module.exports = qSocks;
+module.exports = qsocks;
