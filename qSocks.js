@@ -8,10 +8,10 @@ var global = require('./lib/global');
 var variable = require('./lib/variable');
 
 var WebSocket = require('ws');
-var Promise = require("es6-promise").Promise;
+var Promise = require("promise");
 
 
-var qsocks = {
+var qSocks = {
 	Doc: doc,
 	Field: field,
 	GenericBookmark: genericBookmark,
@@ -90,7 +90,6 @@ function Connection(config) {
 	this.ws.onmessage = function(ev) {
 		var text = ev.data;
 		var msg = JSON.parse(text);
-		console.log(msg)
 		var pending = self.pending[msg.id];
 		delete self.pending[msg.id];
 		if (pending) {
@@ -134,4 +133,4 @@ Connection.prototype.create = function(arg) {
 		return null;
 	}
 };
-module.exports = qsocks;
+module.exports = qSocks;
