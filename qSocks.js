@@ -11,7 +11,7 @@ var WebSocket = require('ws');
 var Promise = require("promise");
 
 
-var qSocks = {
+var qsocks = {
 	Doc: doc,
 	Field: field,
 	GenericBookmark: genericBookmark,
@@ -45,7 +45,7 @@ function Connect(config) {
 	});
 };
 
-qSocks.Connect = Connect;
+qsocks.Connect = Connect;
 
 function Connection(config) {
 	var mark = (config && config.mark) ? config.mark + ': ' : '';
@@ -65,7 +65,7 @@ function Connection(config) {
 
 	this.ws.onopen = function(ev) {
 		if (done) {
-			done.call(self, new qSocks.Global(self, -1));
+			done.call(self, new qsocks.Global(self, -1));
 		};
 	};
 	this.ws.onerror = function(ev) {
@@ -127,10 +127,10 @@ Connection.prototype.ask = function(handle, method, args) {
 	});
 };
 Connection.prototype.create = function(arg) {
-	if (qSocks[arg.qType]) {
-		return new qSocks[arg.qType](this, arg.qHandle);
+	if (qsocks[arg.qType]) {
+		return new qsocks[arg.qType](this, arg.qHandle);
 	} else {
 		return null;
 	}
 };
-module.exports = qSocks;
+module.exports = qsocks;

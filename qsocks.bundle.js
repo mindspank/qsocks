@@ -1,92 +1,141 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.qsocks=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-// shim for using process in browser
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.qsocks = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var doc = require('./lib/doc');
+var field = require('./lib/field');
+var genericBookmark = require('./lib/GenericBookmark');
+var genericDimension = require('./lib/GenericDimension');
+var genericMeasure = require('./lib/GenericMeasure');
+var genericObject = require('./lib/GenericObject');
+var global = require('./lib/global');
+var variable = require('./lib/variable');
 
-var process = module.exports = {};
+var WebSocket = require('ws');
+var Promise = require("promise");
 
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canMutationObserver = typeof window !== 'undefined'
-    && window.MutationObserver;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
 
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
-    }
-
-    var queue = [];
-
-    if (canMutationObserver) {
-        var hiddenDiv = document.createElement("div");
-        var observer = new MutationObserver(function () {
-            var queueList = queue.slice();
-            queue.length = 0;
-            queueList.forEach(function (fn) {
-                fn();
-            });
-        });
-
-        observer.observe(hiddenDiv, { attributes: true });
-
-        return function nextTick(fn) {
-            if (!queue.length) {
-                hiddenDiv.setAttribute('yes', 'no');
-            }
-            queue.push(fn);
-        };
-    }
-
-    if (canPost) {
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
-    }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
-
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
+var qsocks = {
+	Doc: doc,
+	Field: field,
+	GenericBookmark: genericBookmark,
+	GenericDimension: genericDimension,
+	GenericMeasure: genericMeasure,
+	GenericObject: genericObject,
+	Global: global,
+	Variable: variable
 };
 
-// TODO(shtylman)
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
+function Connect(config) {
+	var cfg = {};
+	if (config) {
+		cfg.mark = config.mark;
+		cfg.appname = config.appname || false;
+		cfg.host = config.host;
+		cfg.origin = config.origin;
+		cfg.isSecure = config.isSecure;
+		cfg.rejectUnauthorized = config.rejectUnauthorized;
+		cfg.headers = config.headers || {};
+	}
+
+	return new Promise(function(resolve, reject) {
+		cfg.done = function(glob) {
+			resolve(glob);
+		};
+		cfg.error = function(msg) {
+			reject(msg);
+		};
+		new Connection(cfg);
+	});
 };
 
-},{}],2:[function(require,module,exports){
+qsocks.Connect = Connect;
+
+function Connection(config) {
+	var mark = (config && config.mark) ? config.mark + ': ' : '';
+	var host = (config && config.host) ? config.host : 'localhost';
+	var port = host === 'localhost' ? ':4848' : '';
+	var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://'
+	var error = config ? config.error : null;
+	var done = config ? config.done : null;
+	this.mark = mark;
+	this.seqid = 0;
+	this.pending = {};
+	this.handles = {};
+	var self = this;
+	var suffix = config.appname ? '/sense/app/' + config.appname : '';
+
+	this.ws = new WebSocket(isSecure + host + port + suffix, null, config);
+
+	this.ws.onopen = function(ev) {
+		if (done) {
+			done.call(self, new qsocks.Global(self, -1));
+		};
+	};
+	this.ws.onerror = function(ev) {
+		if (error) {
+			console.log(ev.message)
+		}
+		self.ws = null;
+	};
+	this.ws.onclose = function() {
+		var unexpected = self.ws != null;
+		var pending = self.pending[-99];
+		delete self.pending[-99];
+		if (pending) {
+			pending.callback();
+		} else if (unexpected) {
+			if (error) {
+				error();
+			}
+		}
+		self.ws = null;
+	};
+	this.ws.onmessage = function(ev) {
+		var text = ev.data;
+		var msg = JSON.parse(text);
+		var pending = self.pending[msg.id];
+		delete self.pending[msg.id];
+		if (pending) {
+			if (msg.result) {
+				pending.resolve(msg.result);
+			} else {
+				pending.reject(msg.error);
+			}
+		}
+	};
+}
+Connection.prototype.ask = function(handle, method, args) {
+	var connection = this;
+	if (!Array.isArray(args)) {
+		var array = [];
+		for (var ix in args) {
+			array[ix] = args[ix];
+		}
+		args = array;
+	}
+	var seqid = ++connection.seqid;
+	var request = {
+		method: method,
+		handle: handle,
+		params: args,
+		id: seqid,
+		jsonrpc: '2.0'
+	};
+	return new Promise(function(resolve, reject) {
+		connection.pending[seqid] = {
+			resolve: resolve,
+			reject: reject
+		};
+		connection.ws.send(JSON.stringify(request));
+	});
+};
+Connection.prototype.create = function(arg) {
+	if (qsocks[arg.qType]) {
+		return new qsocks[arg.qType](this, arg.qHandle);
+	} else {
+		return null;
+	}
+};
+module.exports = qsocks;
+},{"./lib/GenericBookmark":2,"./lib/GenericDimension":3,"./lib/GenericMeasure":4,"./lib/GenericObject":5,"./lib/doc":6,"./lib/field":7,"./lib/global":8,"./lib/variable":9,"promise":11,"ws":17}],2:[function(require,module,exports){
 function GenericBookmark(connection, handle) {
     this.connection = connection;
     this.handle = handle;
@@ -813,6 +862,19 @@ Doc.prototype.publish = function(StreamId, Name) {
 Doc.prototype.unPublish = function() {
     return this.connection.ask(this.handle, 'UnPublish', arguments);
 };
+Doc.prototype.searchAssociations = function(Options, Terms, Page) {
+    return this.connection.ask(this.handle, 'SearchAssociations', arguments).then(function(msg) {
+        return msg.qResults;
+    });
+};
+Doc.prototype.searchSuggest = function(Options, Terms) {
+    return this.connection.ask(this.handle, 'SearchAssociations', arguments).then(function(msg) {
+        return msg.qResult;
+    });
+};
+Doc.prototype.selectAssociations = function(Options, Terms, MatchIx, Softlock) {
+    return this.connection.ask(this.handle, 'SelectAssociations', arguments);
+};
 module.exports = Doc;
 },{}],7:[function(require,module,exports){
 function Field(connection, handle) {
@@ -1126,16 +1188,75 @@ Variable.prototype.getNxProperties = function() {
 Variable.prototype.setNxProperties = function(Properties) {
     return this.connection.ask(this.handle, 'SetNxProperties', arguments);
 };
-
 module.exports = Variable;
 },{}],10:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    draining = true;
+    var currentQueue;
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        var i = -1;
+        while (++i < len) {
+            currentQueue[i]();
+        }
+        len = queue.length;
+    }
+    draining = false;
+}
+process.nextTick = function (fun) {
+    queue.push(fun);
+    if (!draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./lib/core.js')
 require('./lib/done.js')
 require('./lib/es6-extensions.js')
 require('./lib/node-extensions.js')
-},{"./lib/core.js":11,"./lib/done.js":12,"./lib/es6-extensions.js":13,"./lib/node-extensions.js":14}],11:[function(require,module,exports){
+},{"./lib/core.js":12,"./lib/done.js":13,"./lib/es6-extensions.js":14,"./lib/node-extensions.js":15}],12:[function(require,module,exports){
 'use strict';
 
 var asap = require('asap')
@@ -1242,7 +1363,7 @@ function doResolve(fn, onFulfilled, onRejected) {
   }
 }
 
-},{"asap":15}],12:[function(require,module,exports){
+},{"asap":16}],13:[function(require,module,exports){
 'use strict';
 
 var Promise = require('./core.js')
@@ -1257,7 +1378,7 @@ Promise.prototype.done = function (onFulfilled, onRejected) {
     })
   })
 }
-},{"./core.js":11,"asap":15}],13:[function(require,module,exports){
+},{"./core.js":12,"asap":16}],14:[function(require,module,exports){
 'use strict';
 
 //This file contains the ES6 extensions to the core Promises/A+ API
@@ -1367,7 +1488,7 @@ Promise.prototype['catch'] = function (onRejected) {
   return this.then(null, onRejected);
 }
 
-},{"./core.js":11,"asap":15}],14:[function(require,module,exports){
+},{"./core.js":12,"asap":16}],15:[function(require,module,exports){
 'use strict';
 
 //This file contains then/promise specific extensions that are only useful for node.js interop
@@ -1432,7 +1553,7 @@ Promise.prototype.nodeify = function (callback, ctx) {
   })
 }
 
-},{"./core.js":11,"asap":15}],15:[function(require,module,exports){
+},{"./core.js":12,"asap":16}],16:[function(require,module,exports){
 (function (process){
 
 // Use the fastest possible means to execute a task in a future turn
@@ -1549,144 +1670,7 @@ module.exports = asap;
 
 
 }).call(this,require('_process'))
-},{"_process":1}],16:[function(require,module,exports){
-var doc = require('./lib/doc');
-var field = require('./lib/field');
-var genericBookmark = require('./lib/GenericBookmark');
-var genericDimension = require('./lib/GenericDimension');
-var genericMeasure = require('./lib/GenericMeasure');
-var genericObject = require('./lib/GenericObject');
-var global = require('./lib/global');
-var variable = require('./lib/variable');
-
-var WebSocket = require('ws');
-var Promise = require("promise");
-
-
-var qSocks = {
-	Doc: doc,
-	Field: field,
-	GenericBookmark: genericBookmark,
-	GenericDimension: genericDimension,
-	GenericMeasure: genericMeasure,
-	GenericObject: genericObject,
-	Global: global,
-	Variable: variable
-};
-
-function Connect(config) {
-	var cfg = {};
-	if (config) {
-		cfg.mark = config.mark;
-		cfg.appname = config.appname || false;
-		cfg.host = config.host;
-		cfg.origin = config.origin;
-		cfg.isSecure = config.isSecure;
-		cfg.rejectUnauthorized = config.rejectUnauthorized;
-		cfg.headers = config.headers || {};
-	}
-
-	return new Promise(function(resolve, reject) {
-		cfg.done = function(glob) {
-			resolve(glob);
-		};
-		cfg.error = function(msg) {
-			reject(msg);
-		};
-		new Connection(cfg);
-	});
-};
-
-qSocks.Connect = Connect;
-
-function Connection(config) {
-	var mark = (config && config.mark) ? config.mark + ': ' : '';
-	var host = (config && config.host) ? config.host : 'localhost';
-	var port = host === 'localhost' ? ':4848' : '';
-	var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://'
-	var error = config ? config.error : null;
-	var done = config ? config.done : null;
-	this.mark = mark;
-	this.seqid = 0;
-	this.pending = {};
-	this.handles = {};
-	var self = this;
-	var suffix = config.appname ? '/sense/app/' + config.appname : '';
-
-	this.ws = new WebSocket(isSecure + host + port + suffix, null, config);
-
-	this.ws.onopen = function(ev) {
-		if (done) {
-			done.call(self, new qSocks.Global(self, -1));
-		};
-	};
-	this.ws.onerror = function(ev) {
-		if (error) {
-			console.log(ev.message)
-		}
-		self.ws = null;
-	};
-	this.ws.onclose = function() {
-		var unexpected = self.ws != null;
-		var pending = self.pending[-99];
-		delete self.pending[-99];
-		if (pending) {
-			pending.callback();
-		} else if (unexpected) {
-			if (error) {
-				error();
-			}
-		}
-		self.ws = null;
-	};
-	this.ws.onmessage = function(ev) {
-		var text = ev.data;
-		var msg = JSON.parse(text);
-		var pending = self.pending[msg.id];
-		delete self.pending[msg.id];
-		if (pending) {
-			if (msg.result) {
-				pending.resolve(msg.result);
-			} else {
-				pending.reject(msg.error);
-			}
-		}
-	};
-}
-Connection.prototype.ask = function(handle, method, args) {
-	var connection = this;
-	if (!Array.isArray(args)) {
-		var array = [];
-		for (var ix in args) {
-			array[ix] = args[ix];
-		}
-		args = array;
-	}
-	var seqid = ++connection.seqid;
-	var request = {
-		method: method,
-		handle: handle,
-		params: args,
-		id: seqid,
-		jsonrpc: '2.0'
-	};
-	return new Promise(function(resolve, reject) {
-		connection.pending[seqid] = {
-			resolve: resolve,
-			reject: reject
-		};
-		connection.ws.send(JSON.stringify(request));
-	});
-};
-Connection.prototype.create = function(arg) {
-	if (qSocks[arg.qType]) {
-		return new qSocks[arg.qType](this, arg.qHandle);
-	} else {
-		return null;
-	}
-};
-module.exports = qSocks;
-},{"./lib/GenericBookmark":2,"./lib/GenericDimension":3,"./lib/GenericMeasure":4,"./lib/GenericObject":5,"./lib/doc":6,"./lib/field":7,"./lib/global":8,"./lib/variable":9,"promise":10,"ws":17}],17:[function(require,module,exports){
+},{"_process":10}],17:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1731,5 +1715,5 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}]},{},[16])(16)
+},{}]},{},[1])(1)
 });

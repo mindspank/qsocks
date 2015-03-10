@@ -1,9 +1,11 @@
 {
   "name": "qsocks",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "description": "A wrapper around the QIX Engine API for node",
   "main": "qsocks.js",
-  "scripts": {},
+  "scripts": {
+    "build": "node build.js && npm version patch --git-tag-version=false"
+  },
   "author": "Alexander Karlsson - akl@qlik.com",
   "license": "BSD-2-Clause",
   "dependencies": {
@@ -20,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/mindspank/qsocks/issues"
   },
-  "homepage": "https://github.com/mindspank/qsocks"
+  "homepage": "https://github.com/mindspank/qsocks",
+  "devDependencies": {
+    "browserify": "^9.0.3"
+  }
 }
