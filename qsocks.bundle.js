@@ -27,6 +27,7 @@ function Connect(config) {
 	var cfg = {};
 	if (config) {
 		cfg.mark = config.mark;
+		cfg.port = config.port;
 		cfg.appname = config.appname || false;
 		cfg.host = config.host;
 		cfg.origin = config.origin;
@@ -51,16 +52,25 @@ qsocks.Connect = Connect;
 function Connection(config) {
 	var mark = (config && config.mark) ? config.mark + ': ' : '';
 	var host = (config && config.host) ? config.host : 'localhost';
-	var port = host === 'localhost' ? ':4848' : '';
+    var port;
+
+    if(host == 'localhost') {
+        port = ':4848';
+    } else {
+        port = (config && config.port) ? ':' + config.port : '';
+    };
+
 	var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://'
 	var error = config ? config.error : null;
 	var done = config ? config.done : null;
+
 	this.mark = mark;
 	this.seqid = 0;
 	this.pending = {};
 	this.handles = {};
+
 	var self = this;
-	var suffix = config.appname ? '/sense/app/' + config.appname : '';
+	var suffix = config.appname ? '/sense/app/' + config.appname : '/app/%3Ftransient%3D';
 
 	this.ws = new WebSocket(isSecure + host + port + suffix, null, config);
 
