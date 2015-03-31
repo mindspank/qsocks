@@ -70,7 +70,7 @@ function Connection(config) {
 	this.handles = {};
 
 	var self = this;
-	var suffix = config.appname ? '/sense/app/' + config.appname : '/app/%3Ftransient%3D';
+	var suffix = config.appname ? '/app/' + config.appname : '/app/%3Ftransient%3D';
 
 	this.ws = new WebSocket(isSecure + host + port + suffix, null, config);
 
