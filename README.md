@@ -21,7 +21,7 @@ npm install qsocks --save
 var qsocks = require('qsocks');
 
 var config = {
-    host: 'sense-demo.qlik.com,
+    host: 'sense-demo.qlik.com',
     isSecure: true
 };
     
