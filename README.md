@@ -50,7 +50,7 @@ qsocks.Connect(config).then(function(global) {
 <body></body>
 ```
 
-### Connecting to a Qlik Sense Desktop in the browser
+### Connecting to Qlik Sense Desktop in the browser
 
 ```js
 <script src="https://rawgit.com/mindspank/qsocks/examples/qsocks.bundle.js"></script>
