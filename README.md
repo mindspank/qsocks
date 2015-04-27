@@ -50,6 +50,23 @@ qsocks.Connect(config).then(function(global) {
 <body></body>
 ```
 
+### Connecting to a Qlik Sense Desktop in the browser
+
+```js
+<script src="https://rawgit.com/mindspank/qsocks/examples/qsocks.bundle.js"></script>
+<script>
+  
+  // Calling Connect() without a config object automatically 
+  // assumes a desktop connection, i.e localhost:4848
+
+  qsocks.Connect().then(function(global) {
+    console.log(global)
+  });
+
+</script>
+<body></body>
+```
+
 ###Documentation
 
 For more documentation on available methods refer to the [Engine API documentation](https://help.qlik.com/sense/en-us/developer/index.html#../Subsystems/EngineAPI/Content/introducing-engine-API.htm%3FTocPath%3DQlik%2520Engine%2520API%7C_____0)  
