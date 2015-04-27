@@ -14,6 +14,7 @@ qsocks currently uses browserify to package up qsocks, ws and promises to bring 
 ```
 npm install qsocks --save
 ```
+Or just grab qsocks.bundle.js and drop it into your page and you are good to go.
 
 ### Connecting to a Qlik Sense Server in node
 
