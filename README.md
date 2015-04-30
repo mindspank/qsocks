@@ -75,5 +75,5 @@ Or see the examples in the Examples directory (work in progress)
 
 ###Projects built with qsocks
 [SenseIt - Extension for Google Chrome to easily load web data](https://github.com/mindspank/SenseIt)  
-[Service Charges - Interactive Web App by Axis Group & https://github.com/skokenes](http://viz.axisgroup.com/servicecharges/#/)
+[Service Charges - Interactive Web App by Axis Group & https://github.com/skokenes](http://viz.axisgroup.com/servicecharges/#/)  
 [Generate Qlik Sense apps from ElasticSearch](https://github.com/pouc/qlik-elastic)
