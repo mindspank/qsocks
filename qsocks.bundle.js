@@ -37,11 +37,11 @@ function Connect(config) {
 		cfg.ticket = config.ticket || false;
 	}
 
-	return new Promise(function(resolve, reject) {
-		cfg.done = function(glob) {
+	return new Promise(function (resolve, reject) {
+		cfg.done = function (glob) {
 			resolve(glob);
 		};
-		cfg.error = function(msg) {
+		cfg.error = function (msg) {
 			reject(msg);
 		};
 		new Connection(cfg);
@@ -54,13 +54,13 @@ function Connection(config) {
 	var host = (config && config.host) ? config.host : 'localhost';
     var port;
 
-    if(host == 'localhost') {
+    if (host == 'localhost') {
         port = ':4848';
     } else {
         port = (config && config.port) ? ':' + config.port : '';
     };
 
-	var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://'
+	var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://';
 	var error = config ? config.error : null;
 	var done = config ? config.done : null;
 
@@ -74,18 +74,18 @@ function Connection(config) {
 
 	this.ws = new WebSocket(isSecure + host + port + suffix + ticket, null, config);
 
-	this.ws.onopen = function(ev) {
+	this.ws.onopen = function (ev) {
 		if (done) {
 			done.call(self, new qsocks.Global(self, -1));
 		};
 	};
-	this.ws.onerror = function(ev) {
+	this.ws.onerror = function (ev) {
 		if (error) {
 			console.log(ev.message)
 		}
 		self.ws = null;
 	};
-	this.ws.onclose = function() {
+	this.ws.onclose = function () {
 		var unexpected = self.ws != null;
 		var pending = self.pending[-99];
 		delete self.pending[-99];
@@ -98,7 +98,7 @@ function Connection(config) {
 		}
 		self.ws = null;
 	};
-	this.ws.onmessage = function(ev) {
+	this.ws.onmessage = function (ev) {
 		var text = ev.data;
 		var msg = JSON.parse(text);
 		var pending = self.pending[msg.id];
@@ -112,7 +112,7 @@ function Connection(config) {
 		}
 	};
 }
-Connection.prototype.ask = function(handle, method, args) {
+Connection.prototype.ask = function (handle, method, args) {
 	var connection = this;
 	if (!Array.isArray(args)) {
 		var array = [];
@@ -129,7 +129,7 @@ Connection.prototype.ask = function(handle, method, args) {
 		id: seqid,
 		jsonrpc: '2.0'
 	};
-	return new Promise(function(resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		connection.pending[seqid] = {
 			resolve: resolve,
 			reject: reject
@@ -137,7 +137,7 @@ Connection.prototype.ask = function(handle, method, args) {
 		connection.ws.send(JSON.stringify(request));
 	});
 };
-Connection.prototype.create = function(arg) {
+Connection.prototype.create = function (arg) {
 	if (qsocks[arg.qType]) {
 		return new qsocks[arg.qType](this, arg.qHandle);
 	} else {
@@ -150,16 +150,18 @@ function GenericBookmark(connection, handle) {
     this.connection = connection;
     this.handle = handle;
 }
-GenericBookmark.prototype.getLayout = function() {
-    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
-        return msg.qLayout;
+GenericBookmark.prototype.apply = function() {
+    return this.connection.ask(this.handle, 'Apply', arguments).then(function(msg) {
+        return msg.qSuccess;
     });
 };
 GenericBookmark.prototype.applyPatches = function(Patches) {
     return this.connection.ask(this.handle, 'ApplyPatches', arguments);
 };
-GenericBookmark.prototype.setProperties = function(Prop) {
-    return this.connection.ask(this.handle, 'SetProperties', arguments);
+GenericBookmark.prototype.getLayout = function() {
+    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+        return msg.qLayout;
+    });
 };
 GenericBookmark.prototype.getProperties = function() {
     return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
@@ -171,50 +173,59 @@ GenericBookmark.prototype.getInfo = function() {
         return msg.qInfo;
     });
 };
+GenericBookmark.prototype.setProperties = function(Prop) {
+    return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
 GenericBookmark.prototype.publish = function() {
     return this.connection.ask(this.handle, 'Publish', arguments);
 };
+GenericBookmark.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
 module.exports = GenericBookmark;
 },{}],3:[function(require,module,exports){
- function GenericDimension(connection, handle) {
-     this.connection = connection;
-     this.handle = handle;
- }
- GenericDimension.prototype.getLayout = function() {
-     return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
-         return msg.qLayout;
-     });
- };
- GenericDimension.prototype.applyPatches = function(Patches) {
-     return this.connection.ask(this.handle, 'ApplyPatches', arguments);
- };
- GenericDimension.prototype.setProperties = function(Prop) {
-     return this.connection.ask(this.handle, 'SetProperties', arguments);
- };
- GenericDimension.prototype.getProperties = function() {
-     return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
-         return msg.qProp;
-     });
- };
- GenericDimension.prototype.getInfo = function() {
-     return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
-         return msg.qInfo;
-     });
- };
- GenericDimension.prototype.getDimension = function() {
-     return this.connection.ask(this.handle, 'GetDimension', arguments).then(function(msg) {
-         return msg.qDim;
-     });
- };
- GenericDimension.prototype.getLinkedObjects = function() {
-     return this.connection.ask(this.handle, 'GetLinkedObjects', arguments).then(function(msg) {
-         return msg.qItems;
-     });
- };
- GenericDimension.prototype.publish = function() {
-     return this.connection.ask(this.handle, 'Publish', arguments);
- };
- module.exports = GenericDimension;
+function GenericDimension(connection, handle) {
+ this.connection = connection;
+ this.handle = handle;
+}
+GenericDimension.prototype.getLayout = function() {
+ return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+     return msg.qLayout;
+ });
+};
+GenericDimension.prototype.applyPatches = function(Patches) {
+ return this.connection.ask(this.handle, 'ApplyPatches', arguments);
+};
+GenericDimension.prototype.setProperties = function(Prop) {
+ return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
+GenericDimension.prototype.getProperties = function() {
+ return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
+     return msg.qProp;
+ });
+};
+GenericDimension.prototype.getInfo = function() {
+ return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
+     return msg.qInfo;
+ });
+};
+GenericDimension.prototype.getDimension = function() {
+ return this.connection.ask(this.handle, 'GetDimension', arguments).then(function(msg) {
+     return msg.qDim;
+ });
+};
+GenericDimension.prototype.getLinkedObjects = function() {
+ return this.connection.ask(this.handle, 'GetLinkedObjects', arguments).then(function(msg) {
+     return msg.qItems;
+ });
+};
+GenericDimension.prototype.publish = function() {
+ return this.connection.ask(this.handle, 'Publish', arguments);
+};
+GenericDimension.prototype.unPublish = function() {
+ return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+module.exports = GenericDimension;
 },{}],4:[function(require,module,exports){
 function GenericMeasure(connection, handle) {
     this.connection = connection;
@@ -254,12 +265,20 @@ GenericMeasure.prototype.getLinkedObjects = function() {
 GenericMeasure.prototype.publish = function() {
     return this.connection.ask(this.handle, 'Publish', arguments);
 };
+GenericMeasure.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
 module.exports = GenericMeasure;
 },{}],5:[function(require,module,exports){
 function GenericObject(connection, handle) {
     this.connection = connection;
     this.handle = handle;
 }
+GenericObject.prototype.exportData = function(FileType, Path, FileName, ExportState) {
+    return this.connection.ask(this.handle, 'ExportData', arguments).then(function(msg) {
+        return msg.qUrl;
+    });
+};
 GenericObject.prototype.getLayout = function() {
     return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
         return msg.qLayout;
@@ -267,6 +286,11 @@ GenericObject.prototype.getLayout = function() {
 };
 GenericObject.prototype.getListObjectData = function(Path, Pages) {
     return this.connection.ask(this.handle, 'GetListObjectData', arguments).then(function(msg) {
+        return msg.qDataPages;
+    });
+};
+GenericObject.prototype.getHyperCubeAdaptiveGrid = function(Path, Pages, DataRanges, MaxNbrcells, QueryLevel) {
+    return this.connection.ask(this.handle, 'GetHyperCubeAdaptiveGrid', arguments).then(function(msg) {
         return msg.qDataPages;
     });
 };
@@ -451,6 +475,9 @@ GenericObject.prototype.getSnapshotObject = function() {
 GenericObject.prototype.publish = function() {
     return this.connection.ask(this.handle, 'Publish', arguments);
 };
+GenericObject.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
 module.exports = GenericObject;
 },{}],6:[function(require,module,exports){
 function Doc(connection, handle) {
@@ -473,6 +500,11 @@ Doc.prototype.getProperties = function() {
 Doc.prototype.addFieldFromExpression = function(Name, Expression) {
     return this.connection.ask(this.handle, 'AddFieldFromExpression', arguments).then(function(msg) {
         return msg.qReturn;
+    });
+};
+Doc.prototype.findMatchingFields = function(Fieldnames, Tags) {
+    return this.connection.ask(this.handle, 'FindMatchingFields', arguments).then(function(msg) {
+        return msg.qFieldNames;
     });
 };
 Doc.prototype.getMatchingFields = function(Tags) {
@@ -544,6 +576,14 @@ Doc.prototype.getAllSheets = function() {
     var connection = this.connection;
     return this.connection.ask(this.handle, 'GetAllSheets', arguments).then(function(msg) {
         return connection.create(msg.qSheets);
+    });
+};
+Doc.prototype.getAllInfos = function() {
+    return this.connection.ask(this.handle, 'GetAllInfos', arguments);
+};
+Doc.prototype.getAssociationScores = function(Table1, Table2) {
+    return this.connection.ask(this.handle, 'GetAssociationScores', arguments).then(function(msg) {
+        return msg.qScore;
     });
 };
 Doc.prototype.createVariable = function(Name) {
@@ -685,6 +725,11 @@ Doc.prototype.destroyDimension = function(Id) {
         return msg.qSuccess;
     });
 };
+Doc.prototype.destroyDraft = function(Id, SourceId) {
+    return this.connection.ask(this.handle, 'DestroyDraft', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
 Doc.prototype.getDimension = function(Id) {
     var connection = this.connection;
     return this.connection.ask(this.handle, 'GetDimension', arguments).then(function(msg) {
@@ -710,6 +755,9 @@ Doc.prototype.getMeasure = function(Id) {
         return connection.create(msg.qReturn);
     });
 };
+Doc.prototype.getMediaList = function(Prop) {
+    return this.connection.ask(this.handle, 'GetMediaList', arguments);
+};
 Doc.prototype.cloneMeasure = function(Id) {
     return this.connection.ask(this.handle, 'CloneMeasure', arguments).then(function(msg) {
         return msg.qCloneId;
@@ -717,6 +765,9 @@ Doc.prototype.cloneMeasure = function(Id) {
 };
 Doc.prototype.checkExpression = function(Expr) {
     return this.connection.ask(this.handle, 'CheckExpression', arguments);
+};
+Doc.prototype.checkNumberOrExpression = function(Expr) {
+    return this.connection.ask(this.handle, 'CheckNumberOrExpression', arguments);
 };
 Doc.prototype.addAlternateState = function(StateName) {
     return this.connection.ask(this.handle, 'AddAlternateState', arguments);
@@ -777,13 +828,28 @@ Doc.prototype.getConnectionOwners = function(Connection, Database) {
         return msg.qOwners;
     });
 };
+Doc.prototype.getDatabaseInfo = function(Connection) {
+    return this.connection.ask(this.handle, 'GetDatabaseInfo', arguments).then(function(msg) {
+        return msg.qInfo;
+    });
+};
+Doc.prototype.getDatabases = function(Connection) {
+    return this.connection.ask(this.handle, 'GetDatabases', arguments).then(function(msg) {
+        return msg.qDatabases;
+    });
+};
+Doc.prototype.getDatabaseOwners = function(Connection, Databse) {
+    return this.connection.ask(this.handle, 'GetDatabaseOwners', arguments).then(function(msg) {
+        return msg.qOwners;
+    });
+};
 Doc.prototype.getDatabaseTables = function(Connection, Database, Owner) {
     return this.connection.ask(this.handle, 'GetDatabaseTables', arguments).then(function(msg) {
         return msg.qTables;
     });
 };
-Doc.prototype.getTableFields = function(Connection, Database, Owner, Table) {
-    return this.connection.ask(this.handle, 'GetTableFields', arguments).then(function(msg) {
+Doc.prototype.getDatabaseTableFields = function(Connection, Database, Owner, Table) {
+    return this.connection.ask(this.handle, 'GetDatabaseTableFields', arguments).then(function(msg) {
         return msg.qFields;
     });
 };
@@ -802,6 +868,11 @@ Doc.prototype.getFileTables = function(Connection, RelativePath, Type) {
         return msg.qTables;
     });
 };
+Doc.prototype.getFileTablesEx = function(Connection, RelativePath, Type) {
+    return this.connection.ask(this.handle, 'GetFileTablesEx', arguments).then(function(msg) {
+        return msg.qTables;
+    });
+};
 Doc.prototype.getFileTableFields = function(Connection, RelativePath, Table, FormatInfo) {
     return this.connection.ask(this.handle, 'GetFileTableFields', arguments);
 };
@@ -811,6 +882,16 @@ Doc.prototype.getFileTableFieldsPreview = function(Connection, RelativePath, Tab
 Doc.prototype.getFileTablesAndFields = function(Connection, RelativePath, Type) {
     return this.connection.ask(this.handle, 'GetFileTablesAndFields', arguments).then(function(msg) {
         return msg.qTables;
+    });
+};
+Doc.prototype.getFolderItemsForConnection = function(Connection, RelativePath) {
+    return this.connection.ask(this.handle, 'GetFolderItemsForConnection', arguments).then(function(msg) {
+        return msg.qFolderItems;
+    });
+};
+Doc.prototype.getIncludeFileContent = function(Path) {
+    return this.connection.ask(this.handle, 'GetIncludeFileContent', arguments).then(function(msg) {
+        return msg.qContent;
     });
 };
 Doc.prototype.sendGenericCommandToCustomConnector = function(Provider, Command, Method, Parameters, AppendConnection) {
@@ -868,6 +949,9 @@ Doc.prototype.generateThumbNail = function(ObjectId) {
 };
 Doc.prototype.publish = function(StreamId, Name) {
     return this.connection.ask(this.handle, 'Publish', arguments);
+};
+Doc.prototype.saveObjects = function() {
+    return this.connection.ask(this.handle, 'SaveObjects', arguments);
 };
 Doc.prototype.unPublish = function() {
     return this.connection.ask(this.handle, 'UnPublish', arguments);
@@ -939,6 +1023,11 @@ Field.prototype.selectAll = function(SoftLock) {
         return msg.qReturn;
     });
 };
+Field.prototype.selectValues = function(FieldValues, Toggle, SoftLock) {
+    return this.connection.ask(this.handle, 'SelectValues', arguments).then(function(msg) {
+        return msg.qReturn;
+    });
+};
 Field.prototype.clear = function() {
     return this.connection.ask(this.handle, 'Clear', arguments).then(function(msg) {
         return msg.qReturn;
@@ -981,14 +1070,20 @@ Global.prototype.getProgress = function(RequestId) {
         return msg.qProgressData;
     });
 };
-Global.prototype.openDoc = function(DocName, UserName, Password, Serial) {
+Global.prototype.openDoc = function(DocName, UserName, Password, Serial, NoData) {
     var connection = this.connection;
     return this.connection.ask(this.handle, 'OpenDoc', arguments).then(function(msg) {
         return connection.create(msg.qReturn);
     });
 };
 Global.prototype.qvVersion = function() {
+    console.log('This method is deprecated. Use ProductVersion method instead.');
     return this.connection.ask(this.handle, 'QvVersion', arguments).then(function(msg) {
+        return msg.qReturn;
+    });
+};
+Global.prototype.productVersion = function() {
+    return this.connection.ask(this.handle, 'ProductVersion', arguments).then(function(msg) {
         return msg.qReturn;
     });
 };
@@ -1015,8 +1110,16 @@ Global.prototype.getDocList = function() {
 Global.prototype.getInteract = function(RequestId) {
     return this.connection.ask(this.handle, 'GetInteract', arguments);
 };
+Global.prototype.getUniqueID = function() {
+    return this.connection.ask(this.handle, 'GetUniqueID', arguments).then(function(msg) {
+        return msg.qUniqueID;
+    });
+};
 Global.prototype.interactDone = function(RequestId, Def) {
     return this.connection.ask(this.handle, 'InteractDone', arguments);
+};
+Global.prototype.getAppEntry = function(AppId) {
+    return this.connection.ask(this.handle, 'GetAppEntry', arguments);
 };
 Global.prototype.getAuthenticatedUser = function() {
     return this.connection.ask(this.handle, 'GetAuthenticatedUser', arguments).then(function(msg) {
@@ -1029,7 +1132,10 @@ Global.prototype.getStreamList = function() {
     });
 };
 Global.prototype.createDocEx = function(DocName, UserName, Password, Serial, LocalizedScriptMainSection) {
-    return this.connection.ask(this.handle, 'CreateDocEx', arguments);
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'CreateDocEx', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
 };
 Global.prototype.getActiveDoc = function() {
     var connection = this.connection;
@@ -1096,13 +1202,13 @@ Global.prototype.getSupportedCodePages = function() {
         return msg.qCodePages;
     });
 };
-Global.prototype.getOdbcDsnList = function() {
-    return this.connection.ask(this.handle, 'GetOdbcDsnList', arguments).then(function(msg) {
+Global.prototype.getOdbcDsns = function() {
+    return this.connection.ask(this.handle, 'GetOdbcDsns', arguments).then(function(msg) {
         return msg.qOdbcDsns;
     });
 };
-Global.prototype.getOleDbProviderList = function() {
-    return this.connection.ask(this.handle, 'GetOleDbProviderList', arguments).then(function(msg) {
+Global.prototype.getOleDbProviders = function() {
+    return this.connection.ask(this.handle, 'GetOleDbProviders', arguments).then(function(msg) {
         return msg.qOleDbProviders;
     });
 };
@@ -1111,13 +1217,16 @@ Global.prototype.getDatabasesFromConnectStatement = function(ConnectionString, U
         return msg.qDatabases;
     });
 };
-Global.prototype.getListOfCustomConnectors = function(ReloadList) {
-    return this.connection.ask(this.handle, 'GetListOfCustomConnectors', arguments).then(function(msg) {
-        return msg.qCustomConnectors;
+Global.prototype.getCustomConnectors = function(ReloadList) {
+    return this.connection.ask(this.handle, 'GetCustomConnectors', arguments).then(function(msg) {
+        return msg.qConnectors;
     });
 };
 Global.prototype.cancelReload = function() {
     return this.connection.ask(this.handle, 'CancelReload', arguments);
+};
+Global.prototype.cancelRequest = function(RequestId) {
+    return this.connection.ask(this.handle, 'CancelRequest', arguments);
 };
 Global.prototype.configureReload = function(CancelOnScriptError, UseErrorData, InteractOnError) {
     return this.connection.ask(this.handle, 'ConfigureReload', arguments);
@@ -1128,9 +1237,19 @@ Global.prototype.shutdownProcess = function() {
 Global.prototype.reloadExtensionList = function() {
     return this.connection.ask(this.handle, 'ReloadExtensionList', arguments);
 };
-Global.prototype.getDefaultDocumentDirectory = function() {
-    return this.connection.ask(this.handle, 'GetDefaultDocumentDirectory', arguments).then(function(msg) {
-        return msg.qDirectory;
+Global.prototype.getDefaultAppFolder = function() {
+    return this.connection.ask(this.handle, 'GetDefaultAppFolder', arguments).then(function(msg) {
+        return msg.qPath;
+    });
+};
+Global.prototype.getFolderItemsForPath = function(Path) {
+    return this.connection.ask(this.handle, 'GetFolderItemsForPath', arguments).then(function(msg) {
+        return msg.qFolderItems;
+    });
+};
+Global.prototype.getFunctions = function(Group) {
+    return this.connection.ask(this.handle, 'GetFunctions', arguments).then(function(msg) {
+        return msg.qFunctions;
     });
 };
 Global.prototype.copyApp = function(TargetAppId, SrcAppId, Ids) {
@@ -1139,6 +1258,7 @@ Global.prototype.copyApp = function(TargetAppId, SrcAppId, Ids) {
     });
 };
 Global.prototype.importApp = function(AppId, SrcPath, Ids) {
+    console.log('It is not recommended to use this method to import an app. Use the Qlik Sense Repository Service API instead. In addition to importing the app, the Qlik Sense Repository Service API migrates the app if needed.');
     return this.connection.ask(this.handle, 'ImportApp', arguments).then(function(msg) {
         return msg.qSuccess;
     });
@@ -1148,8 +1268,19 @@ Global.prototype.exportApp = function(TargetPath, SrcAppId, Ids) {
         return msg.qSuccess;
     });
 };
-Global.prototype.publishApp = function(AppId, StreamId, Copy, ReplaceId) {
+//HAS BEEN REMOVED IN DOCS - SHOULD STILL IN THE API?
+/*Global.prototype.publishApp = function(AppId, StreamId, Copy, ReplaceId) {
     return this.connection.ask(this.handle, 'PublishApp', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};*/
+Global.prototype.replaceAppFromID = function(TargetAppId, SrcAppId, Ids) {
+    return this.connection.ask(this.handle, 'ReplaceAppFromID', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+Global.prototype.replaceAppFromPath = function(TargetAppId, SrcAppId, Ids) {
+    return this.connection.ask(this.handle, 'ReplaceAppFromPath', arguments).then(function(msg) {
         return msg.qSuccess;
     });
 };
@@ -1158,8 +1289,10 @@ Global.prototype.isPersonalMode = function() {
         return msg.qReturn;
     });
 };
-Global.prototype.checkPersonalOutdated = function() {
-    return this.connection.ask(this.handle, 'CheckPersonalOutdated', arguments);
+Global.prototype.isValidConnectionString = function(Connection) {
+    return this.connection.ask(this.handle, 'IsValidConnectionString', arguments).then(function(msg) {
+        return msg.qReturn;
+    });
 };
 module.exports = Global;
 },{}],9:[function(require,module,exports){
