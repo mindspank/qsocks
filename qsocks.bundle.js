@@ -686,7 +686,10 @@ Doc.prototype.destroySessionObject = function(Id) {
     });
 };
 Doc.prototype.createObject = function(Prop) {
-    return this.connection.ask(this.handle, 'CreateObject', arguments);
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'CreateObject', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
 };
 Doc.prototype.destroyObject = function(Id) {
     return this.connection.ask(this.handle, 'DestroyObject', arguments).then(function(msg) {
