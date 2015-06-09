@@ -4,20 +4,21 @@
   "description": "A wrapper around the QIX Engine API for node",
   "main": "qsocks.js",
   "scripts": {
-    "build": "node build.js && npm version patch --git-tag-version=false"
+    "build": "node build.js && npm version patch && npm publish"
   },
   "author": "Alexander Karlsson - akl@qlik.com",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "ws": "~0.4.32",
-    "promise": "^6.1.0"
+    "promise": "^7.0.1",
+    "ws": "^0.7.2"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/mindspank/qsocks.git"
   },
   "keywords": [
-    "qlik"
+    "qlik",
+    "qsocks"
   ],
   "bugs": {
     "url": "https://github.com/mindspank/qsocks/issues"
