@@ -1281,7 +1281,7 @@ Global.prototype.importApp = function(AppId, SrcPath, Ids) {
         return msg.qSuccess;
     });
 };
-lobal.prototype.importAppEx = function(AppId, SrcPath, Ids, qExcludeConnections) {
+Global.prototype.importAppEx = function(AppId, SrcPath, Ids, qExcludeConnections) {
     console.log('It is not recommended to use this method to import an app. Use the Qlik Sense Repository Service API instead. In addition to importing the app, the Qlik Sense Repository Service API migrates the app if needed.');
     return this.connection.ask(this.handle, 'ImportAppEx', arguments);
 };
