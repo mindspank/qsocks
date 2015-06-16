@@ -11,7 +11,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '0.0.17';
+var VERSION = '0.0.18';
 
 var qsocks = {
 	version: VERSION,
@@ -1097,7 +1097,7 @@ Global.prototype.openDoc = function(DocName, UserName, Password, Serial, NoData)
     });
 };
 Global.prototype.qvVersion = function() {
-    console.log('This method is deprecated. Use ProductVersion method instead.');
+    console.log('This method is deprecated as of 2.0. Use ProductVersion method instead.');
     return this.connection.ask(this.handle, 'QvVersion', arguments).then(function(msg) {
         return msg.qReturn;
     });
