@@ -1,10 +1,10 @@
 {
   "name": "qsocks",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "A wrapper around the QIX Engine API for node",
   "main": "qsocks.js",
   "scripts": {
-    "build": "node build.js && npm version patch"
+    "build": "node build.js && npm version patch --no-git-tag-version"
   },
   "author": "Alexander Karlsson - akl@qlik.com",
   "license": "BSD-2-Clause",
