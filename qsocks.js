@@ -36,6 +36,7 @@ function Connect(config) {
 		cfg.rejectUnauthorized = config.rejectUnauthorized;
 		cfg.headers = config.headers || {};
 		cfg.ticket = config.ticket || false;
+		cfg.virtualProxy = config.virtualProxy;
 	}
 
 	return new Promise(function (resolve, reject) {
@@ -70,10 +71,11 @@ function Connection(config) {
 	this.handles = {};
 
 	var self = this;
+	var prefix= config.virtualProxy ? '/'+config.virtualProxy : '';
 	var suffix = config.appname ? '/app/' + config.appname : '/app/%3Ftransient%3D';
 	var ticket = config.ticket ? '?qlikTicket=' + config.ticket : '';
 
-	this.ws = new WebSocket(isSecure + host + port + suffix + ticket, null, config);
+	this.ws = new WebSocket(isSecure + host + port + prefix + suffix + ticket, null, config);
 
 	this.ws.onopen = function (ev) {
 		if (done) {
