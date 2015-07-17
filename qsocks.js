@@ -10,7 +10,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '0.0.19';
+var VERSION = '0.0.21';
 
 var qsocks = {
 	version: VERSION,
@@ -31,6 +31,7 @@ function Connect(config) {
 		cfg.port = config.port;
 		cfg.appname = config.appname || false;
 		cfg.host = config.host;
+		cfg.prefix = config.prefix ? '/' + config.prefix : '';
 		cfg.origin = config.origin;
 		cfg.isSecure = config.isSecure;
 		cfg.rejectUnauthorized = config.rejectUnauthorized;
@@ -73,7 +74,7 @@ function Connection(config) {
 	var suffix = config.appname ? '/app/' + config.appname : '/app/%3Ftransient%3D';
 	var ticket = config.ticket ? '?qlikTicket=' + config.ticket : '';
 
-	this.ws = new WebSocket(isSecure + host + port + suffix + ticket, null, config);
+	this.ws = new WebSocket(isSecure + host + port + config.prefix + suffix + ticket, null, config);
 
 	this.ws.onopen = function (ev) {
 		if (done) {
@@ -144,5 +145,8 @@ Connection.prototype.create = function (arg) {
 	} else {
 		return null;
 	}
+};
+Connection.prototype.close = function() {
+	return this.ws.close();
 };
 module.exports = qsocks;
