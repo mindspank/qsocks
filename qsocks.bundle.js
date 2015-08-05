@@ -11,7 +11,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '0.0.21';
+var VERSION = '0.0.22';
 
 var qsocks = {
 	version: VERSION,
@@ -586,12 +586,6 @@ Doc.prototype.removeAllData = function(Confirm) {
 Doc.prototype.getDocBookmarks = function() {
     return this.connection.ask(this.handle, 'GetDocBookmarks', arguments).then(function(msg) {
         return msg.qBookmarks;
-    });
-};
-Doc.prototype.getAllSheets = function() {
-    var connection = this.connection;
-    return this.connection.ask(this.handle, 'GetAllSheets', arguments).then(function(msg) {
-        return connection.create(msg.qSheets);
     });
 };
 Doc.prototype.getAllInfos = function() {
