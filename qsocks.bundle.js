@@ -11,7 +11,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '0.0.22';
+var VERSION = '0.0.24';
 
 var qsocks = {
 	version: VERSION,
@@ -539,12 +539,6 @@ Doc.prototype.getFieldDescription = function(FieldName) {
         return msg.qReturn;
     });
 };
-Doc.prototype.getVariable = function(Name) {
-    var connection = this.connection;
-    return this.connection.ask(this.handle, 'GetVariable', arguments).then(function(msg) {
-        return connection.create(msg.qReturn);
-    });
-};
 Doc.prototype.getLooselyCoupledVector = function() {
     return this.connection.ask(this.handle, 'GetLooselyCoupledVector', arguments).then(function(msg) {
         return msg.qv;
@@ -598,11 +592,6 @@ Doc.prototype.getAssociationScores = function(Table1, Table2) {
 };
 Doc.prototype.createVariable = function(Name) {
     return this.connection.ask(this.handle, 'CreateVariable', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
-Doc.prototype.removeVariable = function(Name) {
-    return this.connection.ask(this.handle, 'RemoveVariable', arguments).then(function(msg) {
         return msg.qReturn;
     });
 };
@@ -773,9 +762,7 @@ Doc.prototype.getMeasure = function(Id) {
         return connection.create(msg.qReturn);
     });
 };
-Doc.prototype.getMediaList = function(Prop) {
-    return this.connection.ask(this.handle, 'GetMediaList', arguments);
-};
+
 Doc.prototype.cloneMeasure = function(Id) {
     return this.connection.ask(this.handle, 'CloneMeasure', arguments).then(function(msg) {
         return msg.qCloneId;
@@ -987,6 +974,71 @@ Doc.prototype.searchSuggest = function(Options, Terms) {
 Doc.prototype.selectAssociations = function(Options, Terms, MatchIx, Softlock) {
     return this.connection.ask(this.handle, 'SelectAssociations', arguments);
 };
+
+// 2.1 Added methods
+Doc.prototype.getLibraryContent = function(qName) {
+    return this.connection.ask(this.handle, 'GetLibraryContent', arguments).then(function(msg) {
+        return msg.qList;
+    });
+};
+Doc.prototype.getContentLibraries = function() {
+    return this.connection.ask(this.handle, 'GetContentLibraries', arguments).then(function(msg) {
+        return msg.qList;
+    });
+};
+Doc.prototype.createSessionVariable = function(Prop) {
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'CreateSessionVariable', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
+};
+Doc.prototype.createVariableEx = function(Prop) {
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'CreateVariableEx', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
+};
+Doc.prototype.getVariableById = function(Id) {
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'GetVariableById', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
+};
+Doc.prototype.getVariableByName  = function(Name) {
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'GetVariableByName ', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
+};
+Doc.prototype.destroySessionVariable = function(Id) {
+    return this.connection.ask(this.handle, 'DestroySessionVariable', arguments).then(function(msg) {
+        return msg.qResults;
+    });
+};
+Doc.prototype.destroyVariableById = function(Id) {
+    return this.connection.ask(this.handle, 'DestroyVariableById', arguments).then(function(msg) {
+        return msg.qResults;
+    });
+};
+Doc.prototype.destroyVariableByName  = function(Name) {
+    return this.connection.ask(this.handle, 'DestroyVariableByName', arguments).then(function(msg) {
+        return msg.qResults;
+    });
+};
+
+// Deprecated Methods
+Doc.prototype.getMediaList = function(Prop) {
+    return new Error('This method was deprecated in 2.1. Replaced with GetLibraryContent');
+};
+Doc.prototype.createVariable = function(Name) {
+    return new Error('This method was deprecated in 2.1. Replaced with CreateVariableEx and CreateSessionVariable');
+};
+Doc.prototype.getVariable = function(Name) {
+    return new Error('This method was deprecated in 2.1. Replaced with GetVariableById and GetVariableByName');
+};
+Doc.prototype.removeVariable = function(Name) {
+    return new Error('This method was deprecated in 2.1. Replaced with DestroyVariableById, DestroyVariableByName and DestroySessionVariable');
+};
 module.exports = Doc;
 },{}],7:[function(require,module,exports){
 function Field(connection, handle) {
@@ -1094,22 +1146,6 @@ Global.prototype.openDoc = function(DocName, UserName, Password, Serial, NoData)
         return connection.create(msg.qReturn);
     });
 };
-Global.prototype.qvVersion = function() {
-    console.log('This method is deprecated as of 2.0. Use ProductVersion method instead.');
-    return this.connection.ask(this.handle, 'QvVersion', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
-Global.prototype.productVersion = function() {
-    return this.connection.ask(this.handle, 'ProductVersion', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
-Global.prototype.oSVersion = function() {
-    return this.connection.ask(this.handle, 'OSVersion', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
 Global.prototype.oSName = function() {
     return this.connection.ask(this.handle, 'OSName', arguments).then(function(msg) {
         return msg.qReturn;
@@ -1136,11 +1172,7 @@ Global.prototype.getUniqueID = function() {
 Global.prototype.interactDone = function(RequestId, Def) {
     return this.connection.ask(this.handle, 'InteractDone', arguments);
 };
-Global.prototype.getAppEntry = function(AppId) {
-    return this.connection.ask(this.handle, 'GetAppEntry', arguments).then(function(msg) {
-        return msg.qEntry;
-    });
-};
+
 Global.prototype.getAuthenticatedUser = function() {
     return this.connection.ask(this.handle, 'GetAuthenticatedUser', arguments).then(function(msg) {
         return msg.qReturn;
@@ -1299,21 +1331,40 @@ Global.prototype.replaceAppFromID = function(TargetAppId, SrcAppId, Ids) {
         return msg.qSuccess;
     });
 };
-Global.prototype.replaceAppFromPath = function(TargetAppId, SrcAppId, Ids) {
-    return this.connection.ask(this.handle, 'ReplaceAppFromPath', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-Global.prototype.isPersonalMode = function() {
-    return this.connection.ask(this.handle, 'IsPersonalMode', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
 Global.prototype.isValidConnectionString = function(Connection) {
     return this.connection.ask(this.handle, 'IsValidConnectionString', arguments).then(function(msg) {
         return msg.qReturn;
     });
 };
+Global.prototype.oSVersion = function() {
+    return this.connection.ask(this.handle, 'OSVersion', arguments).then(function(msg) {
+        return msg.qReturn;
+    });
+};
+
+// New methods in 2.0
+Global.prototype.getAppEntry = function(AppId) {
+    return this.connection.ask(this.handle, 'GetAppEntry', arguments).then(function(msg) {
+        return msg.qEntry;
+    });
+};
+Global.prototype.productVersion = function() {
+    return this.connection.ask(this.handle, 'ProductVersion', arguments).then(function(msg) {
+        return msg.qReturn;
+    });
+};
+
+// Deprecated Methos
+Global.prototype.isPersonalMode = function() {
+    return new Error('This method was removed in 2.0');
+};
+Global.prototype.replaceAppFromPath = function(TargetAppId, SrcAppId, Ids) {
+    return new Error('This method was removed in 2.1. Use ReplaceAppFromID method instead.');
+};
+Global.prototype.qvVersion = function() {
+    return new Error('This method was removed in 2.0. Use ProductVersion method instead.');
+};
+
 module.exports = Global;
 },{}],9:[function(require,module,exports){
 function Variable(connection, handle) {
@@ -1325,31 +1376,58 @@ Variable.prototype.getProperties = function() {
         return msg.qReturn;
     });
 };
+
+// API has been reworked in 2.1 to align with the other generic objects structure
+Variable.prototype.applyPatches = function(Patches) {
+    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
+};
+Variable.prototype.getInfo = function() {
+    return this.connection.ask(this.handle, 'GetNxProperties', arguments).then(function(msg) {
+        return msg.qResult;
+    });
+};
+Variable.prototype.getLayout = function() {
+    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+        return msg.qLayout;
+    });
+};
+Variable.prototype.publish = function() {
+    return this.connection.ask(this.handle, 'Publish', arguments);
+};
+Variable.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+Variable.prototype.setProperties = function(Prop) {
+    return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
+Variable.prototype.setDualValue  = function(Text, Num) {
+    return this.connection.ask(this.handle, 'SetDualValue', arguments);
+};
+Variable.prototype.setNumValue  = function(Value) {
+    return this.connection.ask(this.handle, 'SetNumValue', arguments);
+};
+Variable.prototype.setStringValue  = function(String) {
+    return this.connection.ask(this.handle, 'SetStringValue', arguments);
+};
+
+// Deprecated Methods
+Variable.prototype.forceContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
+};
 Variable.prototype.getContent = function() {
-    return this.connection.ask(this.handle, 'GetContent', arguments).then(function(msg) {
-        return msg.qContent;
-    });
-};
-Variable.prototype.getRawContent = function() {
-    return this.connection.ask(this.handle, 'GetRawContent', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
-Variable.prototype.setContent = function(Content, UpdateMRU) {
-    return this.connection.ask(this.handle, 'SetContent', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
-Variable.prototype.forceContent = function(s, d) {
-    return this.connection.ask(this.handle, 'ForceContent', arguments);
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
 };
 Variable.prototype.getNxProperties = function() {
-    return this.connection.ask(this.handle, 'GetNxProperties', arguments).then(function(msg) {
-        return msg.qProperties;
-    });
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
 };
-Variable.prototype.setNxProperties = function(Properties) {
-    return this.connection.ask(this.handle, 'SetNxProperties', arguments);
+Variable.prototype.getRawContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+Variable.prototype.setContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
+};
+Variable.prototype.setNxProperties = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
 };
 module.exports = Variable;
 },{}],10:[function(require,module,exports){
