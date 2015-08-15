@@ -1,7 +1,7 @@
 #qsocks 
 ####A lightweight promise wrapper around the Qlik Sense Engine API  
 
-
+####This is the 2.0 Branch of qsocks. Due some breaking changes in the variable api for 2.1 use this branch if you need 2.0 support.
 
 qsocks was born to provide a lightweight promise layer around the Engine API. Shortening the time to implemention without limiting the developer in what she or he can accomplish.
 
