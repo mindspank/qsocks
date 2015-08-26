@@ -34,7 +34,7 @@ qsocks.Connect(config).then(function(global) {
 ### Connecting to a Qlik Sense Server in the browser
 
 ```js
-<script src="https://rawgit.com/mindspank/qsocks/examples/qsocks.bundle.js"></script>
+<script src="https://rawgit.com/mindspank/qsocks/master/qsocks.bundle.js"></script>
 <script>
 
   var config = {
