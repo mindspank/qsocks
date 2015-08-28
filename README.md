@@ -69,6 +69,17 @@ qsocks.Connect(config).then(function(global) {
 
 ###Documentation
 
+####Config  
+* `host` - (String) Hostname of server
+* `appname` - (String) Scoped connection to app.
+* `isSecure` - (Boolean) If true uses wss and port 443, otherwise ws and port 80
+* `port` - (Integer) Port of connection, defaults 443/80
+* `prefix` - (String) Virtual Proxy, defaults to '/'
+* `origin` - (String) Origin of requests, node only.
+* `rejectUnauthorized` - (Boolean) False will ignore unauthorized self-signed certs.
+* `headers` - (Object) HTTP headers
+* `ticket` - (String) Qlik Sense ticket, consumes ticket on Connect()
+
 For more documentation on available methods refer to the [Engine API documentation](https://help.qlik.com/sense/en-us/developer/index.html#../Subsystems/EngineAPI/Content/introducing-engine-API.htm%3FTocPath%3DQlik%2520Engine%2520API%7C_____0)  
 Or see the examples in the Examples directory (work in progress)
 
