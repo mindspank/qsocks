@@ -11,7 +11,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '0.0.23';
+var VERSION = '0.0.24';
 
 var qsocks = {
 	version: VERSION,
@@ -982,7 +982,7 @@ Doc.prototype.searchAssociations = function(Options, Terms, Page) {
 };
 Doc.prototype.searchSuggest = function(Options, Terms) {
     return this.connection.ask(this.handle, 'SearchSuggest', arguments).then(function(msg) {
-        return msg.qResults;
+        return msg.qResult;
     });
 };
 Doc.prototype.selectAssociations = function(Options, Terms, MatchIx, Softlock) {
