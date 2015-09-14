@@ -10,11 +10,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-<<<<<<< HEAD
-var VERSION = '0.0.24';
-=======
 var VERSION = '2.1.0';
->>>>>>> 2.1
 
 var qsocks = {
 	version: VERSION,
@@ -43,7 +39,7 @@ function Connect(config) {
 		cfg.ticket = config.ticket || false;
 		cfg.key = config.key;
 		cfg.cert = config.cert;		
-		cfg.root = config.root;	
+		cfg.ca = config.ca;	
 	}
 
 	return new Promise(function (resolve, reject) {
