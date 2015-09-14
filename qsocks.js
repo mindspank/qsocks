@@ -37,6 +37,9 @@ function Connect(config) {
 		cfg.rejectUnauthorized = config.rejectUnauthorized;
 		cfg.headers = config.headers || {};
 		cfg.ticket = config.ticket || false;
+		cfg.key = config.key;
+		cfg.cert = config.cert;		
+		cfg.root = config.root;	
 	}
 
 	return new Promise(function (resolve, reject) {
