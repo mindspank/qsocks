@@ -79,6 +79,9 @@ qsocks.Connect(config).then(function(global) {
 * `rejectUnauthorized` - (Boolean) False will ignore unauthorized self-signed certs.
 * `headers` - (Object) HTTP headers
 * `ticket` - (String) Qlik Sense ticket, consumes ticket on Connect()
+* `key` - (String) Client Certificate key for QIX connections
+* `cert` - (String) Client certificate for QIX connections
+* `ca` - (Array of String) CA root certificates for QIX connections
 
 For more documentation on available methods refer to the [Engine API documentation](https://help.qlik.com/sense/en-us/developer/index.html#../Subsystems/EngineAPI/Content/introducing-engine-API.htm%3FTocPath%3DQlik%2520Engine%2520API%7C_____0)  
 Or see the examples in the Examples directory (work in progress)
