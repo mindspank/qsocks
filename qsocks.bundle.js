@@ -11,7 +11,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '0.0.24';
+var VERSION = '2.1.0';
 
 var qsocks = {
 	version: VERSION,
@@ -38,6 +38,9 @@ function Connect(config) {
 		cfg.rejectUnauthorized = config.rejectUnauthorized;
 		cfg.headers = config.headers || {};
 		cfg.ticket = config.ticket || false;
+		cfg.key = config.key;
+		cfg.cert = config.cert;		
+		cfg.ca = config.ca;	
 	}
 
 	return new Promise(function (resolve, reject) {
@@ -1321,12 +1324,6 @@ Global.prototype.exportApp = function(TargetPath, SrcAppId, Ids) {
         return msg.qSuccess;
     });
 };
-//HAS BEEN REMOVED IN DOCS - SHOULD STILL IN THE API?
-/*Global.prototype.publishApp = function(AppId, StreamId, Copy, ReplaceId) {
-    return this.connection.ask(this.handle, 'PublishApp', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};*/
 Global.prototype.replaceAppFromID = function(TargetAppId, SrcAppId, Ids) {
     return this.connection.ask(this.handle, 'ReplaceAppFromID', arguments).then(function(msg) {
         return msg.qSuccess;
