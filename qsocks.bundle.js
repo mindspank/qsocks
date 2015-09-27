@@ -11,7 +11,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.0';
+var VERSION = '2.1.1';
 
 var qsocks = {
 	version: VERSION,
@@ -1044,6 +1044,7 @@ Doc.prototype.removeVariable = function(Name) {
     return new Error('This method was deprecated in 2.1. Replaced with DestroyVariableById, DestroyVariableByName and DestroySessionVariable');
 };
 module.exports = Doc;
+
 },{}],7:[function(require,module,exports){
 function Field(connection, handle) {
     this.connection = connection;
