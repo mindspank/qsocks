@@ -10,7 +10,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.1';
+var VERSION = '2.1.2';
 
 var qsocks = {
 	version: VERSION,
@@ -87,6 +87,8 @@ function Connection(config) {
 	};
 	this.ws.onerror = function (ev) {
 		if (error) {
+			error(ev.message)
+		} else {
 			console.log(ev.message)
 		}
 		self.ws = null;
