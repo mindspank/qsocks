@@ -10,7 +10,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.3';
+var VERSION = '2.1.4';
 
 var qsocks = {
 	version: VERSION,
@@ -122,7 +122,10 @@ function Connection(config) {
 		var pending = self.pending[msg.id];
 		delete self.pending[msg.id];
 		if (pending) {
-			if (msg.result) {
+			if (pending.returnRaw) {
+				pending.resolve(msg)
+			}
+			else if (msg.result) {
 				pending.resolve(msg.result);
 			} else {
 				pending.reject(msg.error);
@@ -130,7 +133,7 @@ function Connection(config) {
 		}
 	};
 }
-Connection.prototype.ask = function (handle, method, args) {
+Connection.prototype.ask = function (handle, method, args, id) {
 	var connection = this;
 	if (!Array.isArray(args)) {
 		var array = [];
@@ -139,7 +142,7 @@ Connection.prototype.ask = function (handle, method, args) {
 		}
 		args = array;
 	}
-	var seqid = ++connection.seqid;
+	var seqid = id || ++connection.seqid;
 	var request = {
 		method: method,
 		handle: handle,
@@ -150,7 +153,8 @@ Connection.prototype.ask = function (handle, method, args) {
 	return new Promise(function (resolve, reject) {
 		connection.pending[seqid] = {
 			resolve: resolve,
-			reject: reject
+			reject: reject,
+			returnRaw: id ? true : false
 		};
 		connection.ws.send(JSON.stringify(request));
 	});
