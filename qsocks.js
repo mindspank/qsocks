@@ -10,7 +10,7 @@ var variable = require('./lib/variable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.4';
+var VERSION = '2.1.5';
 
 var qsocks = {
 	version: VERSION,
