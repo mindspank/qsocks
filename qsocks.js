@@ -5,12 +5,12 @@ var genericDimension = require('./lib/GenericDimension');
 var genericMeasure = require('./lib/GenericMeasure');
 var genericObject = require('./lib/GenericObject');
 var global = require('./lib/global');
-var variable = require('./lib/variable');
+var genericVariable = require('./lib/GenericVariable');
 
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.5';
+var VERSION = '2.1.6';
 
 var qsocks = {
 	version: VERSION,
@@ -21,7 +21,7 @@ var qsocks = {
 	GenericMeasure: genericMeasure,
 	GenericObject: genericObject,
 	Global: global,
-	Variable: variable
+	GenericVariable: genericVariable
 };
 
 function Connect(config) {

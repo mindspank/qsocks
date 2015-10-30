@@ -6,12 +6,12 @@ var genericDimension = require('./lib/GenericDimension');
 var genericMeasure = require('./lib/GenericMeasure');
 var genericObject = require('./lib/GenericObject');
 var global = require('./lib/global');
-var variable = require('./lib/variable');
+var genericVariable = require('./lib/GenericVariable');
 
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.5';
+var VERSION = '2.1.6';
 
 var qsocks = {
 	version: VERSION,
@@ -22,7 +22,7 @@ var qsocks = {
 	GenericMeasure: genericMeasure,
 	GenericObject: genericObject,
 	Global: global,
-	Variable: variable
+	GenericVariable: genericVariable
 };
 
 function Connect(config) {
@@ -171,7 +171,7 @@ Connection.prototype.close = function() {
 	return this.ws.close();
 };
 module.exports = qsocks;
-},{"./lib/GenericBookmark":2,"./lib/GenericDimension":3,"./lib/GenericMeasure":4,"./lib/GenericObject":5,"./lib/doc":6,"./lib/field":7,"./lib/global":8,"./lib/variable":9,"promise":13,"ws":23}],2:[function(require,module,exports){
+},{"./lib/GenericBookmark":2,"./lib/GenericDimension":3,"./lib/GenericMeasure":4,"./lib/GenericObject":5,"./lib/GenericVariable":6,"./lib/doc":7,"./lib/field":8,"./lib/global":9,"promise":13,"ws":23}],2:[function(require,module,exports){
 function GenericBookmark(connection, handle) {
     this.connection = connection;
     this.handle = handle;
@@ -516,6 +516,70 @@ GenericObject.prototype.unPublish = function() {
 };
 module.exports = GenericObject;
 },{}],6:[function(require,module,exports){
+function GenericVariable(connection, handle) {
+    this.connection = connection;
+    this.handle = handle;
+}
+GenericVariable.prototype.getProperties = function() {
+    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
+        return msg.qProp;
+    });
+};
+
+// API has been reworked in 2.1 to align with the other generic objects structure
+GenericVariable.prototype.applyPatches = function(Patches) {
+    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
+};
+GenericVariable.prototype.getInfo = function() {
+    return this.connection.ask(this.handle, 'GetNxProperties', arguments).then(function(msg) {
+        return msg.qResult;
+    });
+};
+GenericVariable.prototype.getLayout = function() {
+    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+        return msg.qLayout;
+    });
+};
+GenericVariable.prototype.publish = function() {
+    return this.connection.ask(this.handle, 'Publish', arguments);
+};
+GenericVariable.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+GenericVariable.prototype.setProperties = function(Prop) {
+    return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
+GenericVariable.prototype.setDualValue  = function(Text, Num) {
+    return this.connection.ask(this.handle, 'SetDualValue', arguments);
+};
+GenericVariable.prototype.setNumValue  = function(Value) {
+    return this.connection.ask(this.handle, 'SetNumValue', arguments);
+};
+GenericVariable.prototype.setStringValue  = function(String) {
+    return this.connection.ask(this.handle, 'SetStringValue', arguments);
+};
+
+// Deprecated Methods
+GenericVariable.prototype.forceContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
+};
+GenericVariable.prototype.getContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+GenericVariable.prototype.getNxProperties = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+GenericVariable.prototype.getRawContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+GenericVariable.prototype.setContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
+};
+GenericVariable.prototype.setNxProperties = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+module.exports = GenericVariable;
+},{}],7:[function(require,module,exports){
 function Doc(connection, handle) {
     this.connection = connection;
     this.handle = handle;
@@ -1069,7 +1133,7 @@ Doc.prototype.removeVariable = function(Name) {
     return new Error('This method was deprecated in 2.1. Replaced with DestroyVariableById, DestroyVariableByName and DestroySessionVariable');
 };
 module.exports = Doc;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 function Field(connection, handle) {
     this.connection = connection;
     this.handle = handle;
@@ -1156,7 +1220,7 @@ Field.prototype.setNxProperties = function(Properties) {
     return this.connection.ask(this.handle, 'SetNxProperties', arguments);
 };
 module.exports = Field;
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 function Global(connection, handle) {
     this.connection = connection;
     this.handle = handle;
@@ -1389,70 +1453,6 @@ Global.prototype.qvVersion = function() {
 };
 
 module.exports = Global;
-},{}],9:[function(require,module,exports){
-function Variable(connection, handle) {
-    this.connection = connection;
-    this.handle = handle;
-}
-Variable.prototype.getProperties = function() {
-    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
-
-// API has been reworked in 2.1 to align with the other generic objects structure
-Variable.prototype.applyPatches = function(Patches) {
-    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
-};
-Variable.prototype.getInfo = function() {
-    return this.connection.ask(this.handle, 'GetNxProperties', arguments).then(function(msg) {
-        return msg.qResult;
-    });
-};
-Variable.prototype.getLayout = function() {
-    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
-        return msg.qLayout;
-    });
-};
-Variable.prototype.publish = function() {
-    return this.connection.ask(this.handle, 'Publish', arguments);
-};
-Variable.prototype.unPublish = function() {
-    return this.connection.ask(this.handle, 'UnPublish', arguments);
-};
-Variable.prototype.setProperties = function(Prop) {
-    return this.connection.ask(this.handle, 'SetProperties', arguments);
-};
-Variable.prototype.setDualValue  = function(Text, Num) {
-    return this.connection.ask(this.handle, 'SetDualValue', arguments);
-};
-Variable.prototype.setNumValue  = function(Value) {
-    return this.connection.ask(this.handle, 'SetNumValue', arguments);
-};
-Variable.prototype.setStringValue  = function(String) {
-    return this.connection.ask(this.handle, 'SetStringValue', arguments);
-};
-
-// Deprecated Methods
-Variable.prototype.forceContent = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
-};
-Variable.prototype.getContent = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
-};
-Variable.prototype.getNxProperties = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
-};
-Variable.prototype.getRawContent = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
-};
-Variable.prototype.setContent = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
-};
-Variable.prototype.setNxProperties = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
-};
-module.exports = Variable;
 },{}],10:[function(require,module,exports){
 /*global define:false require:false */
 module.exports = (function(){
