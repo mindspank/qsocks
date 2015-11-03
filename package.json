@@ -1,6 +1,6 @@
 {
   "name": "qsocks",
-  "version": "2.1.6",
+  "version": "2.1.7",
   "description": "A wrapper around the QIX Engine API for node",
   "main": "qsocks.js",
   "scripts": {
@@ -9,8 +9,8 @@
   "author": "Alexander Karlsson - akl@qlik.com",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "promise": "^7.0.1",
-    "ws": "^0.7.2"
+    "promise": "^7.0.4",
+    "ws": "^0.8.0"
   },
   "repository": {
     "type": "git",
