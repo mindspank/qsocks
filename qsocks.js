@@ -38,8 +38,8 @@ function Connect(config) {
 		cfg.headers = config.headers || {};
 		cfg.ticket = config.ticket || false;
 		cfg.key = config.key;
-		cfg.cert = config.cert;		
-		cfg.ca = config.ca;	
+		cfg.cert = config.cert;
+		cfg.ca = config.ca;
 	}
 
 	return new Promise(function (resolve, reject) {
@@ -57,13 +57,13 @@ qsocks.Connect = Connect;
 
 function Connection(config) {
 	var host = (config && config.host) ? config.host : 'localhost';
-    var port;
+	var port;
 
-    if (host == 'localhost') {
-        port = ':4848';
-    } else {
-        port = (config && config.port) ? ':' + config.port : '';
-    };
+	if (host == 'localhost' && typeof config.port === 'undefined') {
+		port = ':4848';
+	} else {
+		port = (config && config.port) ? ':' + config.port : '';
+	};
 
 	var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://';
 	var error = config ? config.error : null;
@@ -75,16 +75,16 @@ function Connection(config) {
 
 	var self = this;
 	var prefix = config.prefix ? config.prefix : '/';
-	
+
 	if (prefix.slice(0,1) !== '/') {
 		prefix = '/' + prefix;
 	};
 	if (prefix.split('').pop() !== '/') {
 		prefix = prefix + '/';
 	};
-	
+
 	config.prefix = prefix;
-		
+
 	var suffix = config.appname ? 'app/' + config.appname : 'app/%3Ftransient%3D';
 	var ticket = config.ticket ? '?qlikTicket=' + config.ticket : '';
 
@@ -129,6 +129,16 @@ function Connection(config) {
 				pending.resolve(msg.result);
 			} else {
 				pending.reject(msg.error);
+			}
+		} else {
+			if(
+				(typeof msg !== 'undefined' && typeof msg.params !== 'undefined' && typeof msg.params.severity !== 'undefined') ||
+				(typeof msg !== 'undefined' && msg.method === "OnAuthenticationInformation" && typeof msg.params !== 'undefined' && msg.params.mustAuthenticate)
+			) {
+				Object.keys(self.pending).forEach(function(item) {
+					self.pending[item].reject(msg.params);
+				})
+				self.close();
 			}
 		}
 	};
