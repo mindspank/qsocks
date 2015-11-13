@@ -11,7 +11,7 @@ var genericVariable = require('./lib/GenericVariable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.7';
+var VERSION = '2.1.9';
 
 var qsocks = {
 	version: VERSION,
@@ -1099,7 +1099,7 @@ Doc.prototype.getVariableById = function(Id) {
 };
 Doc.prototype.getVariableByName  = function(Name) {
     var connection = this.connection;
-    return this.connection.ask(this.handle, 'GetVariableByName ', arguments).then(function(msg) {
+    return this.connection.ask(this.handle, 'GetVariableByName', arguments).then(function(msg) {
         return connection.create(msg.qReturn);
     });
 };
@@ -1133,6 +1133,7 @@ Doc.prototype.removeVariable = function(Name) {
     return new Error('This method was deprecated in 2.1. Replaced with DestroyVariableById, DestroyVariableByName and DestroySessionVariable');
 };
 module.exports = Doc;
+
 },{}],8:[function(require,module,exports){
 function Field(connection, handle) {
     this.connection = connection;
