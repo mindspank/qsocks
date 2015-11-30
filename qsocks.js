@@ -10,7 +10,7 @@ var genericVariable = require('./lib/GenericVariable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.9';
+var VERSION = '2.1.10';
 
 var qsocks = {
 	version: VERSION,
@@ -39,7 +39,8 @@ function Connect(config) {
 		cfg.ticket = config.ticket || false;
 		cfg.key = config.key;
 		cfg.cert = config.cert;		
-		cfg.ca = config.ca;	
+		cfg.ca = config.ca;
+		cfg.identity = config.identity;
 	}
 
 	return new Promise(function (resolve, reject) {
@@ -86,9 +87,10 @@ function Connection(config) {
 	config.prefix = prefix;
 		
 	var suffix = config.appname ? 'app/' + config.appname : 'app/%3Ftransient%3D';
+	var identity = (config && config.identity) ? '/identity/' + config.identity : '';
 	var ticket = config.ticket ? '?qlikTicket=' + config.ticket : '';
 
-	this.ws = new WebSocket(isSecure + host + port + prefix + suffix + ticket, null, config);
+	this.ws = new WebSocket(isSecure + host + port + prefix + suffix + identity + ticket, null, config);
 
 	this.ws.onopen = function (ev) {
 		if (done) {
