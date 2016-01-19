@@ -15,7 +15,10 @@ qsocks currently uses browserify to package up qsocks, ws and promises to bring 
 npm install qsocks --save
 ```
 Or just grab qsocks.bundle.js and drop it into your page and you are good to go.
-
+  
+### Need help?
+Then join our Slack channel http://qlikbranch-slack-invite.herokuapp.com/ and ping `Alex Karlsson` or open a issue on GitHub.  
+  
 ### Connecting to a Qlik Sense Server in node
 
 ```js
