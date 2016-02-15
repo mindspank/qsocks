@@ -10,7 +10,7 @@ var genericVariable = require('./lib/GenericVariable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.10';
+var VERSION = '2.1.11';
 
 var qsocks = {
 	version: VERSION,
