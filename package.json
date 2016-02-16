@@ -1,6 +1,6 @@
 {
   "name": "qsocks",
-  "version": "2.1.11",
+  "version": "2.1.12",
   "description": "A wrapper around the QIX Engine API for node",
   "main": "qsocks.js",
   "scripts": {

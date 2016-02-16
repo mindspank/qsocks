@@ -60,7 +60,7 @@ function Connection(config) {
 	var host = (config && config.host) ? config.host : 'localhost';
     var port;
 
-    if (host == 'localhost') {
+    if (config && !config.hasOwnProperty('host')) {
         port = ':4848';
     } else {
         port = (config && config.port) ? ':' + config.port : '';
