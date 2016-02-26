@@ -11,7 +11,7 @@ var genericVariable = require('./lib/GenericVariable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.12';
+var VERSION = '2.1.13';
 
 var qsocks = {
 	version: VERSION,
@@ -61,7 +61,7 @@ function Connection(config) {
 	var host = (config && config.host) ? config.host : 'localhost';
     var port;
 
-    if (config && !config.hasOwnProperty('host')) {
+    if (config && config.host === undefined ) {
         port = ':4848';
     } else {
         port = (config && config.port) ? ':' + config.port : '';
