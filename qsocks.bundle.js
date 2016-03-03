@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.13';
+var VERSION = '2.1.14';
 
 var qsocks = {
 	version: VERSION,
@@ -173,415 +173,7 @@ Connection.prototype.close = function() {
 	return this.ws.close();
 };
 module.exports = qsocks;
-},{"./lib/genericBookmark":2,"./lib/genericDimension":3,"./lib/genericMeasure":4,"./lib/genericObject":5,"./lib/genericVariable":6,"./lib/doc":7,"./lib/field":8,"./lib/global":9,"promise":12,"ws":20}],2:[function(require,module,exports){
-function GenericBookmark(connection, handle) {
-    this.connection = connection;
-    this.handle = handle;
-}
-GenericBookmark.prototype.apply = function() {
-    return this.connection.ask(this.handle, 'Apply', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericBookmark.prototype.applyPatches = function(Patches) {
-    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
-};
-GenericBookmark.prototype.getLayout = function() {
-    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
-        return msg.qLayout;
-    });
-};
-GenericBookmark.prototype.getProperties = function() {
-    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
-        return msg.qProp;
-    });
-};
-GenericBookmark.prototype.getInfo = function() {
-    return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
-        return msg.qInfo;
-    });
-};
-GenericBookmark.prototype.setProperties = function(Prop) {
-    return this.connection.ask(this.handle, 'SetProperties', arguments);
-};
-GenericBookmark.prototype.publish = function() {
-    return this.connection.ask(this.handle, 'Publish', arguments);
-};
-GenericBookmark.prototype.unPublish = function() {
-    return this.connection.ask(this.handle, 'UnPublish', arguments);
-};
-module.exports = GenericBookmark;
-},{}],3:[function(require,module,exports){
-function GenericDimension(connection, handle) {
- this.connection = connection;
- this.handle = handle;
-}
-GenericDimension.prototype.getLayout = function() {
- return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
-     return msg.qLayout;
- });
-};
-GenericDimension.prototype.applyPatches = function(Patches) {
- return this.connection.ask(this.handle, 'ApplyPatches', arguments);
-};
-GenericDimension.prototype.setProperties = function(Prop) {
- return this.connection.ask(this.handle, 'SetProperties', arguments);
-};
-GenericDimension.prototype.getProperties = function() {
- return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
-     return msg.qProp;
- });
-};
-GenericDimension.prototype.getInfo = function() {
- return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
-     return msg.qInfo;
- });
-};
-GenericDimension.prototype.getDimension = function() {
- return this.connection.ask(this.handle, 'GetDimension', arguments).then(function(msg) {
-     return msg.qDim;
- });
-};
-GenericDimension.prototype.getLinkedObjects = function() {
- return this.connection.ask(this.handle, 'GetLinkedObjects', arguments).then(function(msg) {
-     return msg.qItems;
- });
-};
-GenericDimension.prototype.publish = function() {
- return this.connection.ask(this.handle, 'Publish', arguments);
-};
-GenericDimension.prototype.unPublish = function() {
- return this.connection.ask(this.handle, 'UnPublish', arguments);
-};
-module.exports = GenericDimension;
-},{}],4:[function(require,module,exports){
-function GenericMeasure(connection, handle) {
-    this.connection = connection;
-    this.handle = handle;
-}
-GenericMeasure.prototype.getLayout = function() {
-    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
-        return msg.qLayout;
-    });
-};
-GenericMeasure.prototype.applyPatches = function(Patches) {
-    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
-};
-GenericMeasure.prototype.setProperties = function(Prop) {
-    return this.connection.ask(this.handle, 'SetProperties', arguments);
-};
-GenericMeasure.prototype.getProperties = function() {
-    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
-        return msg.qProp;
-    });
-};
-GenericMeasure.prototype.getInfo = function() {
-    return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
-        return msg.qInfo;
-    });
-};
-GenericMeasure.prototype.getMeasure = function() {
-    return this.connection.ask(this.handle, 'GetMeasure', arguments).then(function(msg) {
-        return msg.qMeasure;
-    });
-};
-GenericMeasure.prototype.getLinkedObjects = function() {
-    return this.connection.ask(this.handle, 'GetLinkedObjects', arguments).then(function(msg) {
-        return msg.qItems;
-    });
-};
-GenericMeasure.prototype.publish = function() {
-    return this.connection.ask(this.handle, 'Publish', arguments);
-};
-GenericMeasure.prototype.unPublish = function() {
-    return this.connection.ask(this.handle, 'UnPublish', arguments);
-};
-module.exports = GenericMeasure;
-},{}],5:[function(require,module,exports){
-function GenericObject(connection, handle) {
-    this.connection = connection;
-    this.handle = handle;
-}
-GenericObject.prototype.exportData = function(FileType, Path, FileName, ExportState) {
-    return this.connection.ask(this.handle, 'ExportData', arguments).then(function(msg) {
-        return msg.qUrl;
-    });
-};
-GenericObject.prototype.getEffectiveProperties = function() {
-    return this.connection.ask(this.handle, 'GetEffectiveProperties', arguments).then(function(msg) {
-        return msg.qProp;
-    });
-};
-GenericObject.prototype.getLayout = function() {
-    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
-        return msg.qLayout;
-    });
-};
-GenericObject.prototype.getListObjectData = function(Path, Pages) {
-    return this.connection.ask(this.handle, 'GetListObjectData', arguments).then(function(msg) {
-        return msg.qDataPages;
-    });
-};
-GenericObject.prototype.getHyperCubeAdaptiveGrid = function(Path, Pages, DataRanges, MaxNbrcells, QueryLevel) {
-    return this.connection.ask(this.handle, 'GetHyperCubeAdaptiveGrid', arguments).then(function(msg) {
-        return msg.qDataPages;
-    });
-};
-GenericObject.prototype.getHyperCubeBinnedData = function(Path, Pages, Viewport, DataRanges, MaxNbrCells, QueryLevel, BinningMethod) {
-    return this.connection.ask(this.handle, 'GetHyperBinnedCubeData', arguments).then(function(msg) {
-        return msg.qDataPages;
-    });
-};
-GenericObject.prototype.getHyperCubeData = function(Path, Pages) {
-    return this.connection.ask(this.handle, 'GetHyperCubeData', arguments).then(function(msg) {
-        return msg.qDataPages;
-    });
-};
-GenericObject.prototype.getHyperCubeReducedData = function(Path, Pages, ZoomFactor, ReductionMode) {
-    return this.connection.ask(this.handle, 'GetHyperCubeReducedData', arguments).then(function(msg) {
-        return msg.qDataPages;
-    });
-};
-GenericObject.prototype.getHyperCubePivotData = function(Path, Pages) {
-    return this.connection.ask(this.handle, 'GetHyperCubePivotData', arguments).then(function(msg) {
-        return msg.qDataPages;
-    });
-};
-GenericObject.prototype.getHyperCubeStackData = function(Path, Pages, MaxNbrCells) {
-    return this.connection.ask(this.handle, 'GetHyperCubeStackData', arguments).then(function(msg) {
-        return msg.qDataPages;
-    });
-};
-GenericObject.prototype.applyPatches = function(Patches, SoftPatch) {
-    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
-};
-GenericObject.prototype.clearSoftPatches = function() {
-    return this.connection.ask(this.handle, 'ClearSoftPatches', arguments);
-};
-GenericObject.prototype.setProperties = function(Prop) {
-    return this.connection.ask(this.handle, 'SetProperties', arguments);
-};
-GenericObject.prototype.getProperties = function() {
-    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
-        return msg.qProp;
-    });
-};
-GenericObject.prototype.setFullPropertyTree = function(PropEntry) {
-    return this.connection.ask(this.handle, 'SetFullPropertyTree', arguments);
-};
-GenericObject.prototype.getFullPropertyTree = function() {
-    return this.connection.ask(this.handle, 'GetFullPropertyTree', arguments).then(function(msg) {
-        return msg.qPropEntry;
-    });
-};
-GenericObject.prototype.getInfo = function() {
-    return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
-        return msg.qInfo;
-    });
-};
-GenericObject.prototype.clearSelections = function(Path, ColIndices) {
-    return this.connection.ask(this.handle, 'ClearSelections', arguments);
-};
-GenericObject.prototype.selectListObjectValues = function(Path, Values, ToggleMode, SoftLock) {
-    return this.connection.ask(this.handle, 'SelectListObjectValues', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.selectListObjectPossible = function(Path, SoftLock) {
-    return this.connection.ask(this.handle, 'SelectListObjectPossible', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.selectListObjectExcluded = function(Path, SoftLock) {
-    return this.connection.ask(this.handle, 'SelectListObjectExcluded', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.selectListObjectAlternative = function(Path, SoftLock) {
-    return this.connection.ask(this.handle, 'SelectListObjectAlternative', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.selectListObjectAll = function(Path, SoftLock) {
-    return this.connection.ask(this.handle, 'SelectListObjectAll', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.searchListObjectFor = function(Path, Match) {
-    return this.connection.ask(this.handle, 'SearchListObjectFor', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.abortListObjectSearch = function(Path) {
-    return this.connection.ask(this.handle, 'AbortListObjectSearch', arguments);
-};
-GenericObject.prototype.acceptListObjectSearch = function(Path, ToggleMode, SoftLock) {
-    return this.connection.ask(this.handle, 'AcceptListObjectSearch', arguments);
-};
-GenericObject.prototype.expandLeft = function(Path, Row, Col, All) {
-    return this.connection.ask(this.handle, 'ExpandLeft', arguments);
-};
-GenericObject.prototype.expandTop = function(Path, Row, Col, All) {
-    return this.connection.ask(this.handle, 'ExpandTop', arguments);
-};
-GenericObject.prototype.collapseLeft = function(Path, Row, Col, All) {
-    return this.connection.ask(this.handle, 'CollapseLeft', arguments);
-};
-GenericObject.prototype.collapseTop = function(Path, Row, Col, All) {
-    return this.connection.ask(this.handle, 'CollapseTop', arguments);
-};
-GenericObject.prototype.drillUp = function(Path, DimNo, NbrSteps) {
-    return this.connection.ask(this.handle, 'DrillUp', arguments);
-};
-GenericObject.prototype.lock = function(Path, ColIndices) {
-    return this.connection.ask(this.handle, 'Lock', arguments);
-};
-GenericObject.prototype.unlock = function(Path, ColIndices) {
-    return this.connection.ask(this.handle, 'Unlock', arguments);
-};
-GenericObject.prototype.selectHyperCubeValues = function(Path, DimNo, Values, ToggleMode) {
-    return this.connection.ask(this.handle, 'SelectHyperCubeValues', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.selectHyperCubeCells = function(Path, RowIndices, ColIndices, SoftLock, DeselectOnlyOneSelected) {
-    return this.connection.ask(this.handle, 'SelectHyperCubeCells', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.selectPivotCells = function(Path, Selections, SoftLock, DeselectOnlyOneSelected) {
-    return this.connection.ask(this.handle, 'SelectPivotCells', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.rangeSelectHyperCubeValues = function(Path, Ranges, OrMode, DeselectOnlyOneSelected) {
-    return this.connection.ask(this.handle, 'RangeSelectHyperCubeValues', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.getChild = function(Id) {
-    var connection = this.connection;
-    return this.connection.ask(this.handle, 'GetChild', arguments).then(function(msg) {
-        return connection.create(msg.qReturn);
-    });
-};
-GenericObject.prototype.getChildInfos = function() {
-    return this.connection.ask(this.handle, 'GetChildInfos', arguments).then(function(msg) {
-        return msg.qInfos;
-    });
-};
-GenericObject.prototype.createChild = function(Prop, PropForThis) {
-    return this.connection.ask(this.handle, 'CreateChild', arguments);
-};
-GenericObject.prototype.destroyChild = function(Id, PropForThis) {
-    return this.connection.ask(this.handle, 'DestroyChild', arguments).then(function(msg) {
-        return msg.qSuccess;
-    });
-};
-GenericObject.prototype.destroyAllChildren = function(PropForThis) {
-    return this.connection.ask(this.handle, 'DestroyAllChildren', arguments);
-};
-GenericObject.prototype.setChildArrayOrder = function(Ids) {
-    return this.connection.ask(this.handle, 'SetChildArrayOrder', arguments);
-};
-GenericObject.prototype.getLinkedObjects = function() {
-    return this.connection.ask(this.handle, 'GetLinkedObjects', arguments).then(function(msg) {
-        return msg.qItems;
-    });
-};
-GenericObject.prototype.copyFrom = function(FromId) {
-    return this.connection.ask(this.handle, 'CopyFrom', arguments);
-};
-GenericObject.prototype.beginSelections = function(Path) {
-    return this.connection.ask(this.handle, 'BeginSelections', arguments);
-};
-GenericObject.prototype.endSelections = function(Accept) {
-    return this.connection.ask(this.handle, 'EndSelections', arguments);
-};
-GenericObject.prototype.resetMadeSelections = function() {
-    return this.connection.ask(this.handle, 'ResetMadeSelections', arguments);
-};
-GenericObject.prototype.embedSnapshotObject = function(Id) {
-    return this.connection.ask(this.handle, 'EmbedSnapshotObject', arguments);
-};
-GenericObject.prototype.getSnapshotObject = function() {
-    var connection = this.connection;
-    return this.connection.ask(this.handle, 'GetSnapshotObject', arguments).then(function(msg) {
-        return connection.create(msg.qReturn);
-    });
-};
-GenericObject.prototype.publish = function() {
-    return this.connection.ask(this.handle, 'Publish', arguments);
-};
-GenericObject.prototype.unPublish = function() {
-    return this.connection.ask(this.handle, 'UnPublish', arguments);
-};
-module.exports = GenericObject;
-},{}],6:[function(require,module,exports){
-function GenericVariable(connection, handle) {
-    this.connection = connection;
-    this.handle = handle;
-}
-GenericVariable.prototype.getProperties = function() {
-    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
-        return msg.qProp;
-    });
-};
-
-// API has been reworked in 2.1 to align with the other generic objects structure
-GenericVariable.prototype.applyPatches = function(Patches) {
-    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
-};
-GenericVariable.prototype.getInfo = function() {
-    return this.connection.ask(this.handle, 'GetNxProperties', arguments).then(function(msg) {
-        return msg.qResult;
-    });
-};
-GenericVariable.prototype.getLayout = function() {
-    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
-        return msg.qLayout;
-    });
-};
-GenericVariable.prototype.publish = function() {
-    return this.connection.ask(this.handle, 'Publish', arguments);
-};
-GenericVariable.prototype.unPublish = function() {
-    return this.connection.ask(this.handle, 'UnPublish', arguments);
-};
-GenericVariable.prototype.setProperties = function(Prop) {
-    return this.connection.ask(this.handle, 'SetProperties', arguments);
-};
-GenericVariable.prototype.setDualValue  = function(Text, Num) {
-    return this.connection.ask(this.handle, 'SetDualValue', arguments);
-};
-GenericVariable.prototype.setNumValue  = function(Value) {
-    return this.connection.ask(this.handle, 'SetNumValue', arguments);
-};
-GenericVariable.prototype.setStringValue  = function(String) {
-    return this.connection.ask(this.handle, 'SetStringValue', arguments);
-};
-
-// Deprecated Methods
-GenericVariable.prototype.forceContent = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
-};
-GenericVariable.prototype.getContent = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
-};
-GenericVariable.prototype.getNxProperties = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
-};
-GenericVariable.prototype.getRawContent = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
-};
-GenericVariable.prototype.setContent = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
-};
-GenericVariable.prototype.setNxProperties = function() {
-    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
-};
-module.exports = GenericVariable;
-},{}],7:[function(require,module,exports){
+},{"./lib/doc":2,"./lib/field":3,"./lib/genericBookmark":4,"./lib/genericDimension":5,"./lib/genericMeasure":6,"./lib/genericObject":7,"./lib/genericVariable":8,"./lib/global":9,"promise":12,"ws":20}],2:[function(require,module,exports){
 function Doc(connection, handle) {
     this.connection = connection;
     this.handle = handle;
@@ -1145,7 +737,7 @@ Doc.prototype.removeVariable = function(Name) {
 };
 module.exports = Doc;
 
-},{}],8:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 function Field(connection, handle) {
     this.connection = connection;
     this.handle = handle;
@@ -1232,6 +824,414 @@ Field.prototype.setNxProperties = function(Properties) {
     return this.connection.ask(this.handle, 'SetNxProperties', arguments);
 };
 module.exports = Field;
+},{}],4:[function(require,module,exports){
+function GenericBookmark(connection, handle) {
+    this.connection = connection;
+    this.handle = handle;
+}
+GenericBookmark.prototype.apply = function() {
+    return this.connection.ask(this.handle, 'Apply', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericBookmark.prototype.applyPatches = function(Patches) {
+    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
+};
+GenericBookmark.prototype.getLayout = function() {
+    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+        return msg.qLayout;
+    });
+};
+GenericBookmark.prototype.getProperties = function() {
+    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
+        return msg.qProp;
+    });
+};
+GenericBookmark.prototype.getInfo = function() {
+    return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
+        return msg.qInfo;
+    });
+};
+GenericBookmark.prototype.setProperties = function(Prop) {
+    return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
+GenericBookmark.prototype.publish = function() {
+    return this.connection.ask(this.handle, 'Publish', arguments);
+};
+GenericBookmark.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+module.exports = GenericBookmark;
+},{}],5:[function(require,module,exports){
+function GenericDimension(connection, handle) {
+ this.connection = connection;
+ this.handle = handle;
+}
+GenericDimension.prototype.getLayout = function() {
+ return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+     return msg.qLayout;
+ });
+};
+GenericDimension.prototype.applyPatches = function(Patches) {
+ return this.connection.ask(this.handle, 'ApplyPatches', arguments);
+};
+GenericDimension.prototype.setProperties = function(Prop) {
+ return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
+GenericDimension.prototype.getProperties = function() {
+ return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
+     return msg.qProp;
+ });
+};
+GenericDimension.prototype.getInfo = function() {
+ return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
+     return msg.qInfo;
+ });
+};
+GenericDimension.prototype.getDimension = function() {
+ return this.connection.ask(this.handle, 'GetDimension', arguments).then(function(msg) {
+     return msg.qDim;
+ });
+};
+GenericDimension.prototype.getLinkedObjects = function() {
+ return this.connection.ask(this.handle, 'GetLinkedObjects', arguments).then(function(msg) {
+     return msg.qItems;
+ });
+};
+GenericDimension.prototype.publish = function() {
+ return this.connection.ask(this.handle, 'Publish', arguments);
+};
+GenericDimension.prototype.unPublish = function() {
+ return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+module.exports = GenericDimension;
+},{}],6:[function(require,module,exports){
+function GenericMeasure(connection, handle) {
+    this.connection = connection;
+    this.handle = handle;
+}
+GenericMeasure.prototype.getLayout = function() {
+    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+        return msg.qLayout;
+    });
+};
+GenericMeasure.prototype.applyPatches = function(Patches) {
+    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
+};
+GenericMeasure.prototype.setProperties = function(Prop) {
+    return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
+GenericMeasure.prototype.getProperties = function() {
+    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
+        return msg.qProp;
+    });
+};
+GenericMeasure.prototype.getInfo = function() {
+    return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
+        return msg.qInfo;
+    });
+};
+GenericMeasure.prototype.getMeasure = function() {
+    return this.connection.ask(this.handle, 'GetMeasure', arguments).then(function(msg) {
+        return msg.qMeasure;
+    });
+};
+GenericMeasure.prototype.getLinkedObjects = function() {
+    return this.connection.ask(this.handle, 'GetLinkedObjects', arguments).then(function(msg) {
+        return msg.qItems;
+    });
+};
+GenericMeasure.prototype.publish = function() {
+    return this.connection.ask(this.handle, 'Publish', arguments);
+};
+GenericMeasure.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+module.exports = GenericMeasure;
+},{}],7:[function(require,module,exports){
+function GenericObject(connection, handle) {
+    this.connection = connection;
+    this.handle = handle;
+}
+GenericObject.prototype.exportData = function(FileType, Path, FileName, ExportState) {
+    return this.connection.ask(this.handle, 'ExportData', arguments).then(function(msg) {
+        return msg.qUrl;
+    });
+};
+GenericObject.prototype.getEffectiveProperties = function() {
+    return this.connection.ask(this.handle, 'GetEffectiveProperties', arguments).then(function(msg) {
+        return msg.qProp;
+    });
+};
+GenericObject.prototype.getLayout = function() {
+    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+        return msg.qLayout;
+    });
+};
+GenericObject.prototype.getListObjectData = function(Path, Pages) {
+    return this.connection.ask(this.handle, 'GetListObjectData', arguments).then(function(msg) {
+        return msg.qDataPages;
+    });
+};
+GenericObject.prototype.getHyperCubeAdaptiveGrid = function(Path, Pages, DataRanges, MaxNbrcells, QueryLevel) {
+    return this.connection.ask(this.handle, 'GetHyperCubeAdaptiveGrid', arguments).then(function(msg) {
+        return msg.qDataPages;
+    });
+};
+GenericObject.prototype.getHyperCubeBinnedData = function(Path, Pages, Viewport, DataRanges, MaxNbrCells, QueryLevel, BinningMethod) {
+    return this.connection.ask(this.handle, 'GetHyperBinnedCubeData', arguments).then(function(msg) {
+        return msg.qDataPages;
+    });
+};
+GenericObject.prototype.getHyperCubeData = function(Path, Pages) {
+    return this.connection.ask(this.handle, 'GetHyperCubeData', arguments).then(function(msg) {
+        return msg.qDataPages;
+    });
+};
+GenericObject.prototype.getHyperCubeReducedData = function(Path, Pages, ZoomFactor, ReductionMode) {
+    return this.connection.ask(this.handle, 'GetHyperCubeReducedData', arguments).then(function(msg) {
+        return msg.qDataPages;
+    });
+};
+GenericObject.prototype.getHyperCubePivotData = function(Path, Pages) {
+    return this.connection.ask(this.handle, 'GetHyperCubePivotData', arguments).then(function(msg) {
+        return msg.qDataPages;
+    });
+};
+GenericObject.prototype.getHyperCubeStackData = function(Path, Pages, MaxNbrCells) {
+    return this.connection.ask(this.handle, 'GetHyperCubeStackData', arguments).then(function(msg) {
+        return msg.qDataPages;
+    });
+};
+GenericObject.prototype.applyPatches = function(Patches, SoftPatch) {
+    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
+};
+GenericObject.prototype.clearSoftPatches = function() {
+    return this.connection.ask(this.handle, 'ClearSoftPatches', arguments);
+};
+GenericObject.prototype.setProperties = function(Prop) {
+    return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
+GenericObject.prototype.getProperties = function() {
+    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
+        return msg.qProp;
+    });
+};
+GenericObject.prototype.setFullPropertyTree = function(PropEntry) {
+    return this.connection.ask(this.handle, 'SetFullPropertyTree', arguments);
+};
+GenericObject.prototype.getFullPropertyTree = function() {
+    return this.connection.ask(this.handle, 'GetFullPropertyTree', arguments).then(function(msg) {
+        return msg.qPropEntry;
+    });
+};
+GenericObject.prototype.getInfo = function() {
+    return this.connection.ask(this.handle, 'GetInfo', arguments).then(function(msg) {
+        return msg.qInfo;
+    });
+};
+GenericObject.prototype.clearSelections = function(Path, ColIndices) {
+    return this.connection.ask(this.handle, 'ClearSelections', arguments);
+};
+GenericObject.prototype.selectListObjectValues = function(Path, Values, ToggleMode, SoftLock) {
+    return this.connection.ask(this.handle, 'SelectListObjectValues', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.selectListObjectPossible = function(Path, SoftLock) {
+    return this.connection.ask(this.handle, 'SelectListObjectPossible', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.selectListObjectExcluded = function(Path, SoftLock) {
+    return this.connection.ask(this.handle, 'SelectListObjectExcluded', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.selectListObjectAlternative = function(Path, SoftLock) {
+    return this.connection.ask(this.handle, 'SelectListObjectAlternative', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.selectListObjectAll = function(Path, SoftLock) {
+    return this.connection.ask(this.handle, 'SelectListObjectAll', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.searchListObjectFor = function(Path, Match) {
+    return this.connection.ask(this.handle, 'SearchListObjectFor', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.abortListObjectSearch = function(Path) {
+    return this.connection.ask(this.handle, 'AbortListObjectSearch', arguments);
+};
+GenericObject.prototype.acceptListObjectSearch = function(Path, ToggleMode, SoftLock) {
+    return this.connection.ask(this.handle, 'AcceptListObjectSearch', arguments);
+};
+GenericObject.prototype.expandLeft = function(Path, Row, Col, All) {
+    return this.connection.ask(this.handle, 'ExpandLeft', arguments);
+};
+GenericObject.prototype.expandTop = function(Path, Row, Col, All) {
+    return this.connection.ask(this.handle, 'ExpandTop', arguments);
+};
+GenericObject.prototype.collapseLeft = function(Path, Row, Col, All) {
+    return this.connection.ask(this.handle, 'CollapseLeft', arguments);
+};
+GenericObject.prototype.collapseTop = function(Path, Row, Col, All) {
+    return this.connection.ask(this.handle, 'CollapseTop', arguments);
+};
+GenericObject.prototype.drillUp = function(Path, DimNo, NbrSteps) {
+    return this.connection.ask(this.handle, 'DrillUp', arguments);
+};
+GenericObject.prototype.lock = function(Path, ColIndices) {
+    return this.connection.ask(this.handle, 'Lock', arguments);
+};
+GenericObject.prototype.unlock = function(Path, ColIndices) {
+    return this.connection.ask(this.handle, 'Unlock', arguments);
+};
+GenericObject.prototype.selectHyperCubeValues = function(Path, DimNo, Values, ToggleMode) {
+    return this.connection.ask(this.handle, 'SelectHyperCubeValues', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.selectHyperCubeCells = function(Path, RowIndices, ColIndices, SoftLock, DeselectOnlyOneSelected) {
+    return this.connection.ask(this.handle, 'SelectHyperCubeCells', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.selectPivotCells = function(Path, Selections, SoftLock, DeselectOnlyOneSelected) {
+    return this.connection.ask(this.handle, 'SelectPivotCells', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.rangeSelectHyperCubeValues = function(Path, Ranges, OrMode, DeselectOnlyOneSelected) {
+    return this.connection.ask(this.handle, 'RangeSelectHyperCubeValues', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.getChild = function(Id) {
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'GetChild', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
+};
+GenericObject.prototype.getChildInfos = function() {
+    return this.connection.ask(this.handle, 'GetChildInfos', arguments).then(function(msg) {
+        return msg.qInfos;
+    });
+};
+GenericObject.prototype.createChild = function(Prop, PropForThis) {
+    return this.connection.ask(this.handle, 'CreateChild', arguments);
+};
+GenericObject.prototype.destroyChild = function(Id, PropForThis) {
+    return this.connection.ask(this.handle, 'DestroyChild', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.destroyAllChildren = function(PropForThis) {
+    return this.connection.ask(this.handle, 'DestroyAllChildren', arguments);
+};
+GenericObject.prototype.setChildArrayOrder = function(Ids) {
+    return this.connection.ask(this.handle, 'SetChildArrayOrder', arguments);
+};
+GenericObject.prototype.getLinkedObjects = function() {
+    return this.connection.ask(this.handle, 'GetLinkedObjects', arguments).then(function(msg) {
+        return msg.qItems;
+    });
+};
+GenericObject.prototype.copyFrom = function(FromId) {
+    return this.connection.ask(this.handle, 'CopyFrom', arguments);
+};
+GenericObject.prototype.beginSelections = function(Path) {
+    return this.connection.ask(this.handle, 'BeginSelections', arguments);
+};
+GenericObject.prototype.endSelections = function(Accept) {
+    return this.connection.ask(this.handle, 'EndSelections', arguments);
+};
+GenericObject.prototype.resetMadeSelections = function() {
+    return this.connection.ask(this.handle, 'ResetMadeSelections', arguments);
+};
+GenericObject.prototype.embedSnapshotObject = function(Id) {
+    return this.connection.ask(this.handle, 'EmbedSnapshotObject', arguments);
+};
+GenericObject.prototype.getSnapshotObject = function() {
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'GetSnapshotObject', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
+};
+GenericObject.prototype.publish = function() {
+    return this.connection.ask(this.handle, 'Publish', arguments);
+};
+GenericObject.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+module.exports = GenericObject;
+},{}],8:[function(require,module,exports){
+function GenericVariable(connection, handle) {
+    this.connection = connection;
+    this.handle = handle;
+}
+GenericVariable.prototype.getProperties = function() {
+    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
+        return msg.qProp;
+    });
+};
+
+// API has been reworked in 2.1 to align with the other generic objects structure
+GenericVariable.prototype.applyPatches = function(Patches) {
+    return this.connection.ask(this.handle, 'ApplyPatches', arguments);
+};
+GenericVariable.prototype.getInfo = function() {
+    return this.connection.ask(this.handle, 'GetNxProperties', arguments).then(function(msg) {
+        return msg.qResult;
+    });
+};
+GenericVariable.prototype.getLayout = function() {
+    return this.connection.ask(this.handle, 'GetLayout', arguments).then(function(msg) {
+        return msg.qLayout;
+    });
+};
+GenericVariable.prototype.publish = function() {
+    return this.connection.ask(this.handle, 'Publish', arguments);
+};
+GenericVariable.prototype.unPublish = function() {
+    return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+GenericVariable.prototype.setProperties = function(Prop) {
+    return this.connection.ask(this.handle, 'SetProperties', arguments);
+};
+GenericVariable.prototype.setDualValue  = function(Text, Num) {
+    return this.connection.ask(this.handle, 'SetDualValue', arguments);
+};
+GenericVariable.prototype.setNumValue  = function(Value) {
+    return this.connection.ask(this.handle, 'SetNumValue', arguments);
+};
+GenericVariable.prototype.setStringValue  = function(String) {
+    return this.connection.ask(this.handle, 'SetStringValue', arguments);
+};
+
+// Deprecated Methods
+GenericVariable.prototype.forceContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
+};
+GenericVariable.prototype.getContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+GenericVariable.prototype.getNxProperties = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+GenericVariable.prototype.getRawContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+GenericVariable.prototype.setContent = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with SetProperties');
+};
+GenericVariable.prototype.setNxProperties = function() {
+    return new Error('This method was deprecated in 2.1. Replaced with GetProperties');
+};
+module.exports = GenericVariable;
 },{}],9:[function(require,module,exports){
 function Global(connection, handle) {
     this.connection = connection;
