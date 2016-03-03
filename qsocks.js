@@ -1,11 +1,11 @@
 var doc = require('./lib/doc');
 var field = require('./lib/field');
-var genericBookmark = require('./lib/GenericBookmark');
-var genericDimension = require('./lib/GenericDimension');
-var genericMeasure = require('./lib/GenericMeasure');
-var genericObject = require('./lib/GenericObject');
+var genericBookmark = require('./lib/genericBookmark');
+var genericDimension = require('./lib/genericDimension');
+var genericMeasure = require('./lib/genericMeasure');
+var genericObject = require('./lib/genericObject');
 var global = require('./lib/global');
-var genericVariable = require('./lib/GenericVariable');
+var genericVariable = require('./lib/genericVariable');
 
 var WebSocket = require('ws');
 var Promise = require("promise");
