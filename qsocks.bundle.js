@@ -1,12 +1,12 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.qsocks = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var doc = require('./lib/doc');
 var field = require('./lib/field');
-var genericBookmark = require('./lib/GenericBookmark');
-var genericDimension = require('./lib/GenericDimension');
-var genericMeasure = require('./lib/GenericMeasure');
-var genericObject = require('./lib/GenericObject');
+var genericBookmark = require('./lib/genericBookmark');
+var genericDimension = require('./lib/genericDimension');
+var genericMeasure = require('./lib/genericMeasure');
+var genericObject = require('./lib/genericObject');
 var global = require('./lib/global');
-var genericVariable = require('./lib/GenericVariable');
+var genericVariable = require('./lib/genericVariable');
 
 var WebSocket = require('ws');
 var Promise = require("promise");
@@ -173,7 +173,7 @@ Connection.prototype.close = function() {
 	return this.ws.close();
 };
 module.exports = qsocks;
-},{"./lib/GenericBookmark":2,"./lib/GenericDimension":3,"./lib/GenericMeasure":4,"./lib/GenericObject":5,"./lib/GenericVariable":6,"./lib/doc":7,"./lib/field":8,"./lib/global":9,"promise":12,"ws":20}],2:[function(require,module,exports){
+},{"./lib/genericBookmark":2,"./lib/genericDimension":3,"./lib/genericMeasure":4,"./lib/genericObject":5,"./lib/genericVariable":6,"./lib/doc":7,"./lib/field":8,"./lib/global":9,"promise":12,"ws":20}],2:[function(require,module,exports){
 function GenericBookmark(connection, handle) {
     this.connection = connection;
     this.handle = handle;
