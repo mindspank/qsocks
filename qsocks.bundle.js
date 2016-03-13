@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 var WebSocket = require('ws');
 var Promise = require("promise");
 
-var VERSION = '2.1.14';
+var VERSION = '2.1.15';
 
 var qsocks = {
 	version: VERSION,
@@ -54,8 +54,44 @@ function Connect(config) {
 		new Connection(cfg);
 	});
 };
-
 qsocks.Connect = Connect;
+
+function ConnectOpenApp(config) {
+    if(!config.appname) return Promise.reject(new Error('Missing appname property'));
+	
+    var cfg = {};
+	if (config) {
+		cfg.mark = config.mark;
+		cfg.port = config.port;
+		cfg.appname = config.appname || false;
+		cfg.host = config.host;
+		cfg.prefix = config.prefix || false;
+		cfg.origin = config.origin;
+		cfg.isSecure = config.isSecure;
+		cfg.rejectUnauthorized = config.rejectUnauthorized;
+		cfg.headers = config.headers || {};
+		cfg.ticket = config.ticket || false;
+		cfg.key = config.key;
+		cfg.cert = config.cert;		
+		cfg.ca = config.ca;
+		cfg.identity = config.identity;
+	}
+
+	return new Promise(function(resolve, reject) {
+        cfg.done = function (glob) {
+            glob.openDoc(cfg.appname).then(function(app) {
+			   resolve([glob, app]);
+            }, function(error) {
+               reject(error) 
+            })
+		};
+		cfg.error = function (msg) {
+			reject(msg);
+		};
+		new Connection(cfg);
+	});
+};
+qsocks.ConnectOpenApp = ConnectOpenApp;
 
 function Connection(config) {
 	var host = (config && config.host) ? config.host : 'localhost';
