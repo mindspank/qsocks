@@ -2,6 +2,7 @@ var qsocks = require('qsocks');
 
 var config = {
   host: 'sense-demo.qlik.com',
+  origin: 'http://localhost', // Pass a origin that has a corresponding record in the virtual proxy whitelist
   isSecure: true
 };
 
