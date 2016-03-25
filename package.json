@@ -9,8 +9,9 @@
   "author": "Alexander Karlsson - akl@qlik.com",
   "license": "BSD-2-Clause",
   "dependencies": {
-    "promise": "^7.0.4",
-    "ws": "^0.8.0"
+    "extend": "^3.0.0",
+    "promise": "^7.1.1",
+    "ws": "^1.0.1"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,9 @@
   },
   "keywords": [
     "qlik",
-    "qsocks"
+    "qsocks",
+    "qix",
+    "qliksense"
   ],
   "bugs": {
     "url": "https://github.com/mindspank/qsocks/issues"
