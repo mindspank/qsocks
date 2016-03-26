@@ -1,6 +1,6 @@
 {
   "name": "qsocks",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "A wrapper around the QIX Engine API for node",
   "main": "qsocks.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "url": "https://github.com/mindspank/qsocks/issues"
   },
   "browser": {
-    "ws": false  
+    "ws": false
   },
   "homepage": "https://github.com/mindspank/qsocks",
   "devDependencies": {
