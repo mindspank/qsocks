@@ -374,11 +374,6 @@ Doc.prototype.getAssociationScores = function(Table1, Table2) {
         return msg.qScore;
     });
 };
-Doc.prototype.createVariable = function(Name) {
-    return this.connection.ask(this.handle, 'CreateVariable', arguments).then(function(msg) {
-        return msg.qReturn;
-    });
-};
 Doc.prototype.getLocaleInfo = function() {
     return this.connection.ask(this.handle, 'GetLocaleInfo', arguments).then(function(msg) {
         return msg.qReturn;
@@ -842,7 +837,6 @@ Doc.prototype.removeVariable = function(Name) {
     return new Error('This method was deprecated in 2.1. Replaced with DestroyVariableById, DestroyVariableByName and DestroySessionVariable');
 };
 module.exports = Doc;
-
 },{"events":13,"util":25}],3:[function(require,module,exports){
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
