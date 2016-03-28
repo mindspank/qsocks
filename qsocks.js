@@ -9,7 +9,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require("promise");
 
-var VERSION = '2.2.1';
+var VERSION = '2.2.2';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -222,6 +222,12 @@ function Connection(config) {
             msg.change.forEach(function(d) {
                 if (this.handles[d]) return this.handles[d].emit('change');
             }.bind(this));
+        };
+        
+        if (msg.close) {
+            msg.close.forEach(function(d) {
+                if (this.handles[d]) return this.handles[d].emit('close');
+            }.bind(this));            
         };
 
     }.bind(this));
