@@ -6,7 +6,7 @@
 qsocks was born to provide a lightweight promise layer around the Engine API. Shortening the time to implemention without limiting the developer in what she or he can accomplish.
 
 The aim of qsocks is to mimic the functionality in the Engine API bringing the capabilities to node and the browser.   
-qsocks currently uses browserify to package up qsocks, ws and promises to bring consistency to the browser landscape.
+qsocks currently uses browserify to package up qsocks and promises to bring consistency to the browser landscape.
 
 ##Getting Started
 
@@ -91,6 +91,46 @@ qsocks.Connect(config).then(function(global) {
 For more documentation on available methods refer to the [Engine API documentation](https://help.qlik.com/sense/en-us/developer/index.html#../Subsystems/EngineAPI/Content/introducing-engine-API.htm%3FTocPath%3DQlik%2520Engine%2520API%7C_____0)  
 Or see the examples in the Examples directory (work in progress)
 
+#### Events  
+All models will emit events for `change` and `close`.
+Change events will notify you that the model has been invalidated on the server and needs to validate with a `GetLayout` or `GetProperties` call.  
+Close events will notify you that the model has been closed by the server.
+
+*Example of Change event*
+```javascript
+qsocks.Connect().then(function(global) {
+    return global.openDoc('TestApp.qvf')
+})
+.then(function(app) {
+    app.createSessionObject({
+        qInfo: {
+            qId: '',
+            qType: 'list'
+        },
+        qListObjectDef: {
+            qDef: {
+                qFieldDefs: ['[Case Owner]']
+            },
+            qInitialDataFetch: [{
+                qWidth: 1,
+                qHeight: 1000,
+                qLeft: 0,
+                qTop: 0
+            }]
+        }
+    })
+    .then(function(model) {  
+        model.getLayout().then(function(layout) {
+            console.log(layout)
+        });       
+        model.on('change', function() {
+            model.getLayout().then(function(layout) {
+                console.log(layout)
+            })
+        });       
+    });
+});
+```
 
 ###Projects built with qsocks
 [SenseIt - Extension for Google Chrome to easily load web data](https://github.com/mindspank/SenseIt)  
