@@ -19,8 +19,9 @@ connection.then(function(q) {
         },
         qListObjectDef: {
             qDef: {
-                qFieldDefs: ['[Case Owner]']
+                qFieldDefs: ['[Case Owner]'] // Since our field name contains a space, wrap it in brackets.
             },
+            // This is the size of the data page we want to fetch on getLayout execution.
             qInitialDataFetch: [{
                 qWidth: 1,
                 qHeight: 1000,
@@ -53,7 +54,12 @@ connection.then(function(q) {
         });
         
         // Issue a selection on the field handle.
-        field.select('Systems').then(console.log, console.log); 
+        field.select('Systems').then(console.log, console.log);
+        
+        /**
+         * All qsocks classes inherits from Nodes eventemitter https://nodejs.org/api/events.html
+         * This means that you can create your own event streams through by having emit/on/once available on all classes
+         */
 
     });
 })
