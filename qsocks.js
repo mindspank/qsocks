@@ -9,7 +9,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require("promise");
 
-var VERSION = '2.2.0';
+var VERSION = '2.2.4';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -113,7 +113,15 @@ function Connection(config) {
     } else {
         port = (config && config.port) ? ':' + config.port : '';
     };
-
+    
+    var IS_SERVICE_CONNECTION = false; 
+    
+    if(config && config.host) {
+     if (config.headers.hasOwnProperty('X-Qlik-User') && config.key !== undefined && config.cert !== undefined ) {
+        IS_SERVICE_CONNECTION = true;            
+     };
+    };
+    
     var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://';
     var error = config ? config.error : null;
     var done = config ? config.done : null;
@@ -147,42 +155,6 @@ function Connection(config) {
     } else {
         this.ws = new WebSocket(isSecure + host + port + prefix + suffix + identity + ticket);
     };
-
-    /**
-     * For desktop return a global instance.
-     * For Server send a frame to get a notification back.
-     */
-    this.ws.addEventListener('open', function open() {
-        if (host === 'localhost' && port === ':4848') {
-            this.glob = new qsocks.Global(this, -1);
-            done.call(this, this.glob);
-        } else {
-            this.ws.send(JSON.stringify({
-                "method": "ProductVersion",
-                "handle": -1,
-                "params": [],
-                "id": ++self.seqid,
-                "jsonrpc": "2.0"
-            }));
-        }
-    }.bind(this));
-
-    this.ws.addEventListener('error', function err(ev) {
-        if (error) {
-            error(ev.message)
-        } else {
-            console.log(ev.message)
-        }
-        self.ws = null;
-    });
-
-    this.ws.addEventListener('close', function close() {
-        var unexpected = self.ws != null;
-        if (unexpected && error) {
-            error();
-        };
-        this.ws = null;
-    }.bind(this));
 
     this.ws.addEventListener('message', function message(ev) {
         var msg = JSON.parse(ev.data);
@@ -223,8 +195,57 @@ function Connection(config) {
                 if (this.handles[d]) return this.handles[d].emit('change');
             }.bind(this));
         };
+        
+        if (msg.suspend) {
+            msg.suspend.forEach(function(d) {
+                if (this.handles[d]) return this.handles[d].emit('suspend');
+            }.bind(this));
+        };        
+        
+        if (msg.close) {
+            msg.close.forEach(function(d) {
+                if (this.handles[d]) return this.handles[d].emit('close');
+            }.bind(this));            
+        };
 
     }.bind(this));
+    
+    /**
+     * For desktop return a global instance.
+     * For Server send a frame to get a notification back.
+     */
+    this.ws.addEventListener('open', function open() {
+        if ((host === 'localhost' && port === ':4848') || IS_SERVICE_CONNECTION ) {
+            this.glob = new qsocks.Global(this, -1);
+            done.call(this, this.glob);
+        } else {
+            this.ws.send(JSON.stringify({
+                "method": "ProductVersion",
+                "handle": -1,
+                "params": [],
+                "id": ++self.seqid,
+                "jsonrpc": "2.0"
+            }));
+        }
+    }.bind(this));
+
+    this.ws.addEventListener('error', function err(ev) {
+        if (error) {
+            error(ev.message)
+        } else {
+            console.log(ev.message)
+        }
+        self.ws = null;
+    });
+
+    this.ws.addEventListener('close', function close() {
+        var unexpected = self.ws != null;
+        if (unexpected && error) {
+            error();
+        };
+        this.ws = null;
+    }.bind(this));
+
 
 };
 Connection.prototype.ask = function(handle, method, args, id) {

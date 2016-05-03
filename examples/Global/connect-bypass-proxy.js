@@ -13,7 +13,7 @@ const client_key = fs.readFileSync('client_key.pem');
 const config = {
     host: 'myserver.com',
     port: 4747, // Standard Engine port
-    isSecture: true,
+    isSecure: true,
     headers: {
         'X-Qlik-User': 'UserDirectory=Internal;UserId=sa_repository' // Passing a user to QIX to authenticate as
     },
