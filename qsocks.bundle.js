@@ -9,9 +9,9 @@ var genericObject = require('./lib/genericObject');
 var glob = require('./lib/global');
 var genericVariable = require('./lib/genericVariable');
 
-var Promise = require("promise");
+var Promise = require('promise');
 
-var VERSION = '2.2.4';
+var VERSION = '2.2.5';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -20,7 +20,7 @@ var WebSocket = global.WebSocket || global.MozWebSocket;
 if (IS_NODE) {
     try {
         WebSocket = require('ws');
-    } catch (e) {}
+    } catch (e) { }
 };
 
 var qsocks = {
@@ -52,13 +52,14 @@ function Connect(config) {
         cfg.cert = config.cert;
         cfg.ca = config.ca;
         cfg.identity = config.identity;
+        cfg.disconnect = config.disconnect;
     }
 
-    return new Promise(function(resolve, reject) {
-        cfg.done = function(glob) {
+    return new Promise(function (resolve, reject) {
+        cfg.done = function (glob) {
             resolve(glob);
         };
-        cfg.error = function(msg) {
+        cfg.error = function (msg) {
             reject(msg);
         };
         new Connection(cfg);
@@ -86,17 +87,18 @@ function ConnectOpenApp(config) {
         cfg.ca = config.ca;
         cfg.identity = config.identity;
         cfg.debug = config.debug || false;
+        cfg.disconnect = config.disconnect;
     }
 
-    return new Promise(function(resolve, reject) {
-        cfg.done = function(glob) {
-            glob.openDoc(cfg.appname).then(function(app) {
+    return new Promise(function (resolve, reject) {
+        cfg.done = function (glob) {
+            glob.openDoc(cfg.appname).then(function (app) {
                 resolve([glob, app]);
-            }, function(error) {
+            }, function (error) {
                 reject(error)
             })
         };
-        cfg.error = function(msg) {
+        cfg.error = function (msg) {
             reject(msg);
         };
         new Connection(cfg);
@@ -115,18 +117,19 @@ function Connection(config) {
     } else {
         port = (config && config.port) ? ':' + config.port : '';
     };
-    
-    var IS_SERVICE_CONNECTION = false; 
-    
-    if(config && config.host) {
-     if (config.headers.hasOwnProperty('X-Qlik-User') && config.key !== undefined && config.cert !== undefined ) {
-        IS_SERVICE_CONNECTION = true;            
-     };
+
+    var IS_SERVICE_CONNECTION = false;
+
+    if (config && config.host) {
+        if (config.headers.hasOwnProperty('X-Qlik-User') && config.key !== undefined && config.cert !== undefined) {
+            IS_SERVICE_CONNECTION = true;
+        };
     };
-    
+
     var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://';
     var error = config ? config.error : null;
     var done = config ? config.done : null;
+    var disconnect = config ? config.disconnect : null;
 
     this.glob = null;
     this.seqid = 0;
@@ -170,6 +173,7 @@ function Connection(config) {
         if (!msg.id) {
             if ((msg.method === "OnAuthenticationInformation" && msg.params.mustAuthenticate) || (msg.params && msg.params.severity)) {
                 this.ws.close();
+                this.ws = null;
                 return error(msg.params);
             };
             if (msg.method === "OnAuthenticationInformation" && !msg.params.mustAuthenticate) {
@@ -193,31 +197,31 @@ function Connection(config) {
         };
 
         if (msg.change) {
-            msg.change.forEach(function(d) {
+            msg.change.forEach(function (d) {
                 if (this.handles[d]) return this.handles[d].emit('change');
             }.bind(this));
         };
-        
+
         if (msg.suspend) {
-            msg.suspend.forEach(function(d) {
+            msg.suspend.forEach(function (d) {
                 if (this.handles[d]) return this.handles[d].emit('suspend');
             }.bind(this));
-        };        
-        
+        };
+
         if (msg.close) {
-            msg.close.forEach(function(d) {
+            msg.close.forEach(function (d) {
                 if (this.handles[d]) return this.handles[d].emit('close');
-            }.bind(this));            
+            }.bind(this));
         };
 
     }.bind(this));
-    
+
     /**
      * For desktop return a global instance.
      * For Server send a frame to get a notification back.
      */
     this.ws.addEventListener('open', function open() {
-        if ((host === 'localhost' && port === ':4848') || IS_SERVICE_CONNECTION ) {
+        if ((host === 'localhost' && port === ':4848') || IS_SERVICE_CONNECTION) {
             this.glob = new qsocks.Global(this, -1);
             done.call(this, this.glob);
         } else {
@@ -237,20 +241,18 @@ function Connection(config) {
         } else {
             console.log(ev.message)
         }
-        self.ws = null;
-    });
+        this.ws = null;
+    }.bind(this));
 
-    this.ws.addEventListener('close', function close() {
-        var unexpected = self.ws != null;
-        if (unexpected && error) {
-            error();
+    this.ws.addEventListener('close', function close(ev) {
+        if (!this.ws && disconnect) {
+            disconnect(ev);
         };
         this.ws = null;
     }.bind(this));
 
-
 };
-Connection.prototype.ask = function(handle, method, args, id) {
+Connection.prototype.ask = function (handle, method, args, id) {
     var connection = this;
     if (!Array.isArray(args)) {
         var array = [];
@@ -272,7 +274,7 @@ Connection.prototype.ask = function(handle, method, args, id) {
         console.log('Outgoing', request)
     };
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         connection.pending[seqid] = {
             resolve: resolve,
             reject: reject,
@@ -281,7 +283,7 @@ Connection.prototype.ask = function(handle, method, args, id) {
         connection.ws.send(JSON.stringify(request));
     });
 };
-Connection.prototype.create = function(arg) {
+Connection.prototype.create = function (arg) {
     if (qsocks[arg.qType]) {
         this.handles[arg.qHandle] = new qsocks[arg.qType](this, arg.qHandle);
         return this.handles[arg.qHandle];
@@ -289,7 +291,7 @@ Connection.prototype.create = function(arg) {
         return null;
     }
 };
-Connection.prototype.close = function() {
+Connection.prototype.close = function () {
     return this.ws.close();
 };
 module.exports = qsocks;
