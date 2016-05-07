@@ -86,7 +86,8 @@ qsocks.Connect(config).then(function(global) {
 * `cert` - (String) Client certificate for QIX connections
 * `ca` - (Array of String) CA root certificates for QIX connections
 * `identity` - (String) Session identity  
-* `debug` - (Boolean) Will pipe socket messages to console.log
+* `debug` - (Boolean) Will pipe socket messages to console.log  
+* `disconnect` - (Function) Called if socket is closed
 
 For more documentation on available methods refer to the [Engine API documentation](https://help.qlik.com/sense/en-us/developer/index.html#../Subsystems/EngineAPI/Content/introducing-engine-API.htm%3FTocPath%3DQlik%2520Engine%2520API%7C_____0)  
 Or see the examples in the Examples directory (work in progress)
@@ -141,3 +142,4 @@ qsocks.Connect().then(function(global) {
 [Chartcacher - Render Qlik charts disconnected from QIX](https://github.com/mindspank/chartcacher)  
 [Qlik-utils - Abstraction layer for Qlik APIs](https://www.npmjs.com/package/qlik-utils)  
 [SerializeApp - Serializes a Qlik app into JSON](https://www.npmjs.com/package/serializeapp)  
+[Diplomatic Pulse - A custom web UI for QIX](https://github.com/mindspank/DiplomaticPulse/)
