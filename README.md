@@ -86,7 +86,7 @@ qsocks.Connect(config).then(function(global) {
 * `cert` - (String) Client certificate for QIX connections
 * `ca` - (Array of String) CA root certificates for QIX connections
 * `identity` - (String) Session identity  
-* `debug` - (Boolean) Will pipe socket messages to console.log  
+* `debug` - (Boolean || Function) Will pipe socket messages to console.log or pipe to supplied function  
 * `disconnect` - (Function) Called if socket is closed
 
 For more documentation on available methods refer to the [Engine API documentation](https://help.qlik.com/sense/en-us/developer/index.html#../Subsystems/EngineAPI/Content/introducing-engine-API.htm%3FTocPath%3DQlik%2520Engine%2520API%7C_____0)  

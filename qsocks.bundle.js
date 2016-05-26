@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '2.2.5';
+var VERSION = '2.2.6';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -52,6 +52,7 @@ function Connect(config) {
         cfg.cert = config.cert;
         cfg.ca = config.ca;
         cfg.identity = config.identity;
+        cfg.debug = config.debug || false;
         cfg.disconnect = config.disconnect;
     }
 
@@ -135,7 +136,9 @@ function Connection(config) {
     this.seqid = 0;
     this.pending = {};
     this.handles = {};
+    
     this.debug = config.debug;
+    this.debugIsFunction = typeof this.debug === 'function';
 
     var prefix = config.prefix ? config.prefix : '/';
 
@@ -164,7 +167,11 @@ function Connection(config) {
     this.ws.addEventListener('message', function message(ev) {
         var msg = JSON.parse(ev.data);
         if (this.debug) {
-            console.log('Incoming', msg);
+            if( this.debugIsFunction ) {
+                this.debug('Incoming', msg);            
+            } else {
+                console.log('Incoming', msg);
+            }
         };
 
         /**
@@ -271,7 +278,11 @@ Connection.prototype.ask = function (handle, method, args, id) {
     };
 
     if (this.debug) {
-        console.log('Outgoing', request)
+        if( this.debugIsFunction ) {
+            this.debug('Incoming', msg);            
+        } else {
+            console.log('Incoming', msg);
+        }
     };
 
     return new Promise(function (resolve, reject) {
