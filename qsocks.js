@@ -9,7 +9,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '2.2.7';
+var VERSION = '2.2.8';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -19,6 +19,17 @@ if (IS_NODE) {
     try {
         WebSocket = require('ws');
     } catch (e) { }
+};
+
+if (IS_NODE) {
+    Object.defineProperty(Object.prototype, "hasOwnPropertyCI", {
+        "enumerable": false,
+        "value": function(keyName) {
+            return (Object.keys(this).map(function(v){
+                return v.toUpperCase()
+            }).indexOf(keyName.toUpperCase()) > -1)
+        }
+    });
 };
 
 var qsocks = {
@@ -120,7 +131,7 @@ function Connection(config) {
     var IS_SERVICE_CONNECTION = false;
 
     if (config && config.host) {
-        if (config.headers.hasOwnProperty('X-Qlik-User') && config.key !== undefined && config.cert !== undefined) {
+        if (config.headers.hasOwnPropertyCI('X-Qlik-User') && config.key !== undefined && config.cert !== undefined) {
             IS_SERVICE_CONNECTION = true;
         };
     };
