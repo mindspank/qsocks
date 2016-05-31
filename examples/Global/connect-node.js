@@ -1,4 +1,4 @@
-var qsocks = require('qsocks');
+const qsocks = require('qsocks');
 
 var config = {
   host: 'sense-demo.qlik.com',

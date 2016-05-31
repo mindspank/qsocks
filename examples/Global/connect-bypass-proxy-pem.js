@@ -1,6 +1,6 @@
 /**
  * Connects directly to the QIX Engine, bypassing the Qlik Sense Proxy.
- * This method of connecting requires access to the Qlik Sense Certificates and uses a service account.
+ * This method of connecting requires access to the Qlik Sense Certificates in PEM format and uses a service account.
  */
 
 const qsocks = require('qsocks');
