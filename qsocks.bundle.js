@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '2.2.8';
+var VERSION = '2.2.9';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -59,9 +59,11 @@ function Connect(config) {
         cfg.rejectUnauthorized = config.rejectUnauthorized;
         cfg.headers = config.headers || {};
         cfg.ticket = config.ticket || false;
-        cfg.key = config.key;
-        cfg.cert = config.cert;
-        cfg.ca = config.ca;
+        cfg.key = config.key || null;
+        cfg.cert = config.cert || null;
+        cfg.ca = config.ca || null;
+        cfg.pfx = config.pfx || null;
+        cfg.passphrase = config.passphrase || null;
         cfg.identity = config.identity;
         cfg.debug = config.debug || false;
         cfg.disconnect = config.disconnect;
@@ -94,9 +96,11 @@ function ConnectOpenApp(config) {
         cfg.rejectUnauthorized = config.rejectUnauthorized;
         cfg.headers = config.headers || {};
         cfg.ticket = config.ticket || false;
-        cfg.key = config.key;
-        cfg.cert = config.cert;
-        cfg.ca = config.ca;
+        cfg.key = config.key || null;
+        cfg.cert = config.cert || null;
+        cfg.ca = config.ca || null;
+        cfg.pfx = config.pfx || null;
+        cfg.passphrase = config.passphrase || null;
         cfg.identity = config.identity;
         cfg.debug = config.debug || false;
         cfg.disconnect = config.disconnect;
@@ -130,18 +134,27 @@ function Connection(config) {
         port = (config && config.port) ? ':' + config.port : '';
     };
 
-    var IS_SERVICE_CONNECTION = false;
-
-    if (config && config.host) {
-        if (config.headers.hasOwnPropertyCI('X-Qlik-User') && config.key !== undefined && config.cert !== undefined) {
-            IS_SERVICE_CONNECTION = true;
-        };
-    };
-
     var isSecure = (config && config.isSecure) ? 'wss://' : 'ws://';
     var error = config ? config.error : null;
     var done = config ? config.done : null;
     var disconnect = config ? config.disconnect : null;
+
+    var IS_SERVICE_CONNECTION = false;
+    console.log(config)
+    if (config && config.host) {
+        if ( config.headers.hasOwnPropertyCI('X-Qlik-User') ) {
+            IS_SERVICE_CONNECTION = true;
+        };
+    };
+    if ( IS_SERVICE_CONNECTION && (!config.cert && !config.key) ) {
+        if ( !config.pfx && !config.passphrase ) {
+            if ( error ) {
+                return error('Missing certificates for service connection')
+            } else {
+                throw new Error('Missing certificates for service connection')
+            }
+        }
+    };
 
     this.glob = null;
     this.seqid = 0;
