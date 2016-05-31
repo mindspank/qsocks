@@ -141,11 +141,12 @@ function Connection(config) {
 
     var IS_SERVICE_CONNECTION = false;
     
-    if (config && config.host) {
+    if (config && config.host && IS_NODE) {
         if ( config.headers.hasOwnPropertyCI('X-Qlik-User') ) {
             IS_SERVICE_CONNECTION = true;
         };
     };
+
     if ( IS_SERVICE_CONNECTION && (!config.cert && !config.key) ) {
         if ( !config.pfx && !config.passphrase ) {
             if ( error ) {
