@@ -9,7 +9,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '2.2.9';
+var VERSION = '2.2.10';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -138,7 +138,7 @@ function Connection(config) {
     var disconnect = config ? config.disconnect : null;
 
     var IS_SERVICE_CONNECTION = false;
-    console.log(config)
+    
     if (config && config.host) {
         if ( config.headers.hasOwnPropertyCI('X-Qlik-User') ) {
             IS_SERVICE_CONNECTION = true;
