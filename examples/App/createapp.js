@@ -23,7 +23,7 @@ qsocks.Connect( {appname: applicationName} )
         // Access to the app class
         // http://help.qlik.com/en-US/sense-developer/2.2/Subsystems/EngineAPI/Content/Classes/AppClass/App-class.htm
 
-        // Define a load script. In this scenario we just autogenerate some data.
+        // Define a load script. In this scenario we'll just autogenerate some data.
         const loadscript = `    
         LOAD *,
             Day(DateField) as [Day],
