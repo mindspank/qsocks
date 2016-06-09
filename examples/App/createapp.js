@@ -25,17 +25,22 @@ qsocks.Connect( {appname: applicationName} )
 
         // Define a load script. In this scenario we'll just autogenerate some data.
         const loadscript = `    
-        LOAD *,
-            Day(DateField) as [Day],
-            Weekday(DateField) as [Weekday],
-            Month(DateField) as [Month],
-            Dual('Q' & Ceil(Month(DateField)/3), Ceil(Month(DateField)/3)) as Quarter,
-            num(DateField) as [DateNum]
-        ;
-        LOAD 
-            Rand() * 1000 as [Sales Amount], 
-            Date(Date('2015-01-01', 'YYYY-MM-DD') + recno() - 1) as DateField
-        AUTOGENERATE Date('2015-12-31', 'YYYY-MM-DD') - Date('2015-01-01', 'YYYY-MM-DD') + 1;`;
+            Data:
+            LOAD 
+                Rand() * 1000 as [Sales Amount], 
+                Date(Date('2015-01-01', 'YYYY-MM-DD') + recno() - 1) as DateField
+            AUTOGENERATE Date('2015-12-31', 'YYYY-MM-DD') - Date('2015-01-01', 'YYYY-MM-DD') + 1;
+            
+            Calendar:
+            DECLARE FIELD DEFINITION TAGGED '$date'
+               Fields
+                  Year($1) As Year Tagged ('$numeric'),
+                  Month($1) as Month Tagged ('$numeric'),
+                  Date($1) as Date Tagged ('$date'),
+                  Weekday($1) as Weekday Tagged ('$numeric')
+            ;
+            
+            DERIVE FIELDS FROM FIELDS DateField USING Calendar;`;
 
         return app.setScript(loadscript)
             .then(() => {
