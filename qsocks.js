@@ -9,7 +9,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '2.2.11';
+var VERSION = '2.2.12';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -302,9 +302,9 @@ Connection.prototype.ask = function (handle, method, args, id) {
 
     if (this.debug) {
         if( this.debugIsFunction ) {
-            this.debug('Incoming', request);            
+            this.debug('Outgoing', request);            
         } else {
-            console.log('Incoming', request);
+            console.log('Outgoing', request);
         }
     };
 
