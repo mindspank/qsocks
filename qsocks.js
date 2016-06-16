@@ -222,8 +222,20 @@ function Connection(config) {
                 pending.resolve(msg)
             }
             else if (msg.result) {
+                
+                // Resolve pending promise
                 pending.resolve(msg.result);
+
+            } else if (msg.error && msg.error.code === 15) {
+                
+                // Operation Aborted - break and retry request
+                pending.request.id = ++this.seqid;
+                this.pending[pending.request.id] = pending;
+
+                return this.ws.send(JSON.stringify(pending.request));
+            
             } else {
+                // Unhandled error, reject pending promise.
                 pending.reject(msg.error);
             }
         };
@@ -284,15 +296,6 @@ function Connection(config) {
     }.bind(this));
 
 };
-Connection.prototype.pause = function() {
-    this.isPaused = true;
-};
-Connection.prototype.start = function() {
-    this.isPaused = false;
-    this.queue.forEach(function(d) {
-        this.ws.send(JSON.stringify(d));
-    }.bind(this))
-};
 Connection.prototype.ask = function (handle, method, args, id) {
     var connection = this;
     if (!Array.isArray(args)) {
@@ -323,6 +326,7 @@ Connection.prototype.ask = function (handle, method, args, id) {
         connection.pending[seqid] = {
             resolve: resolve,
             reject: reject,
+            request: request,
             returnRaw: id ? true : false
         };
 
@@ -344,5 +348,14 @@ Connection.prototype.create = function (arg) {
 };
 Connection.prototype.close = function () {
     return this.ws.close();
+};
+Connection.prototype.pause = function() {
+    this.isPaused = true;
+};
+Connection.prototype.start = function() {
+    this.isPaused = false;
+    this.queue.forEach(function(d) {
+        this.ws.send(JSON.stringify(d));
+    }.bind(this))
 };
 module.exports = qsocks;
