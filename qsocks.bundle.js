@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '2.2.12';
+var VERSION = '3.0.0';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -882,6 +882,14 @@ Doc.prototype.evaluateEx = function(qExpression) {
        return msg.qValue; 
     });
 };
+
+// New methods in 3.0
+Doc.prototype.searchObjects = function(qOptions, qTerm, qPage) {
+    return this.connection.ask(this.handle, 'SearchObjects', arguments).then(function(msg) {
+       return msg.qResults; 
+    });
+};
+
 // Deprecated Methods
 Doc.prototype.getMediaList = function(Prop) {
     return new Error('This method was deprecated in 2.1. Replaced with GetLibraryContent');
@@ -1355,6 +1363,28 @@ GenericObject.prototype.publish = function() {
 };
 GenericObject.prototype.unPublish = function() {
     return this.connection.ask(this.handle, 'UnPublish', arguments);
+};
+
+// New methods in 3.0
+GenericObject.prototype.getListObjectContinuousData = function(qPath, qOptions) {
+    return this.connection.ask(this.handle, 'GetListObjectContinuousData', arguments).then(function(msg) {
+        return msg;
+    });
+};
+GenericObject.prototype.getHyperCubeContinuousData = function(qPath, qOptions) {
+    return this.connection.ask(this.handle, 'GetHyperCubeContinuousData', arguments).then(function(msg) {
+        return msg;
+    });
+};
+GenericObject.prototype.selectListObjectContinuousRange = function(qPath, qRanges, qSoftLock) {
+    return this.connection.ask(this.handle, 'SelectListObjectContinuousRange', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
+};
+GenericObject.prototype.selectHyperCubeContinuousRange = function(qPath, qRanges, qSoftLock) {
+    return this.connection.ask(this.handle, 'SelectHyperCubeContinuousRange', arguments).then(function(msg) {
+        return msg.qSuccess;
+    });
 };
 module.exports = GenericObject;
 },{"events":13,"util":25}],8:[function(require,module,exports){
