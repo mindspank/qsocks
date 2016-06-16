@@ -18,18 +18,20 @@ Or just grab qsocks.bundle.js and drop it into your page and you are good to go.
   
 ### Need help?
 Then join our Slack channel http://qlikbranch-slack-invite.herokuapp.com/ and ping `Alex Karlsson` or open a issue on GitHub.  
+Be sure to check out the [examples!](https://github.com/mindspank/qsocks/tree/master/examples)
   
 ### Connecting to a Qlik Sense Server in node
 
 ```js
-var qsocks = require('qsocks');
+const qsocks = require('qsocks');
 
 var config = {
     host: 'sense-demo.qlik.com',
-    isSecure: true
+    isSecure: true,
+    origin: 'localhost'
 };
     
-qsocks.Connect(config).then(function(global) {
+qsocks.Connect(config).then(global => {
     console.log(global);
 })
 ```
@@ -45,7 +47,7 @@ qsocks.Connect(config).then(function(global) {
     isSecure: true
   };
 
-  qsocks.Connect(config).then(function(global) {
+  qsocks.Connect(config).then(global => {
     console.log(global)
   });
 
@@ -62,7 +64,7 @@ qsocks.Connect(config).then(function(global) {
   // Calling Connect() without a config object automatically 
   // assumes a desktop connection, i.e localhost:4848
 
-  qsocks.Connect().then(function(global) {
+  qsocks.Connect().then(global => {
     console.log(global)
   });
 
@@ -90,7 +92,7 @@ qsocks.Connect(config).then(function(global) {
 * `disconnect` - (Function) Called if socket is closed
 
 For more documentation on available methods refer to the [Engine API documentation](https://help.qlik.com/sense/en-us/developer/index.html#../Subsystems/EngineAPI/Content/introducing-engine-API.htm%3FTocPath%3DQlik%2520Engine%2520API%7C_____0)  
-Or see the examples in the Examples directory (work in progress)
+Or see the examples in the [examples directory](https://github.com/mindspank/qsocks/tree/master/examples)
 
 #### Events  
 All models will emit events for `change` and `close`.
@@ -99,13 +101,13 @@ Close events will notify you that the model has been closed by the server.
 
 *Example of Change event*
 ```javascript
-qsocks.Connect().then(function(global) {
+qsocks.Connect().then(global => {
     return global.openDoc('TestApp.qvf')
 })
-.then(function(app) {
+.then(app => {
     app.createSessionObject({
         qInfo: {
-            qId: '',
+            qId: 'mysessionobject',
             qType: 'list'
         },
         qListObjectDef: {
@@ -118,28 +120,33 @@ qsocks.Connect().then(function(global) {
                 qLeft: 0,
                 qTop: 0
             }]
-        }
+        },
+        myproperty: 'Hello World'
     })
-    .then(function(model) {  
-        model.getLayout().then(function(layout) {
+    .then(model => {  
+        model.getLayout().then(layout => {
             console.log(layout)
-        });       
-        model.on('change', function() {
-            model.getLayout().then(function(layout) {
+        })     
+        model.on('change', () => {
+            model.getLayout().then(layout => {
                 console.log(layout)
             })
-        });       
-    });
-});
+        }) 
+        model.on('close', () => {
+            app.destroySessionObject('mysessionobject')
+        })
+    })
+})
 ```
 
 ###Projects built with qsocks
 [SenseIt - Extension for Google Chrome to easily load web data](https://github.com/mindspank/SenseIt)  
 [Service Charges - Interactive Web App by Axis Group & https://github.com/skokenes](http://viz.axisgroup.com/servicecharges/#/)  
 [Generate Qlik Sense apps from ElasticSearch](https://github.com/pouc/qlik-elastic)  
-[Chrome Extension - lets you create calculations on the fly](https://github.com/countnazgul/qlik-sense-chrome-devtools-extension)
+[Chrome Extension - lets you create calculations on the fly](https://github.com/countnazgul/qlik-sense-chrome-devtools-extension)  
 [Architeqt - Inheritance Engine for Apps](https://github.com/mindspank/architeqt)  
 [Chartcacher - Render Qlik charts disconnected from QIX](https://github.com/mindspank/chartcacher)  
 [Qlik-utils - Abstraction layer for Qlik APIs](https://www.npmjs.com/package/qlik-utils)  
 [SerializeApp - Serializes a Qlik app into JSON](https://www.npmjs.com/package/serializeapp)  
-[Diplomatic Pulse - A custom web UI for QIX](https://github.com/mindspank/DiplomaticPulse/)
+[Diplomatic Pulse - A custom web UI for QIX](https://github.com/mindspank/DiplomaticPulse/)  
+[Sense Search Components - Drop in search components](https://github.com/websy85/sense-search-components)
