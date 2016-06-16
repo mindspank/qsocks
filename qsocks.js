@@ -159,6 +159,8 @@ function Connection(config) {
     this.seqid = 0;
     this.pending = {};
     this.handles = {};
+    this.queue = [];
+    this.isPaused = false;
     
     this.debug = config.debug;
     this.debugIsFunction = typeof this.debug === 'function';
@@ -282,6 +284,15 @@ function Connection(config) {
     }.bind(this));
 
 };
+Connection.prototype.pause = function() {
+    this.isPaused = true;
+};
+Connection.prototype.start = function() {
+    this.isPaused = false;
+    this.queue.forEach(function(d) {
+        this.ws.send(JSON.stringify(d));
+    }.bind(this))
+};
 Connection.prototype.ask = function (handle, method, args, id) {
     var connection = this;
     if (!Array.isArray(args)) {
@@ -314,7 +325,13 @@ Connection.prototype.ask = function (handle, method, args, id) {
             reject: reject,
             returnRaw: id ? true : false
         };
-        connection.ws.send(JSON.stringify(request));
+
+        if (!connection.isPaused) {
+            connection.ws.send(JSON.stringify(request));
+        } else {
+            connection.queue.push(request);
+        };
+
     });
 };
 Connection.prototype.create = function (arg) {
