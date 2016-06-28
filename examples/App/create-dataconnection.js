@@ -21,6 +21,8 @@ qsocks.Connect( {appname: applicationName} )
         // Access to the app class
         // http://help.qlik.com/en-US/sense-developer/2.2/Subsystems/EngineAPI/Content/Classes/AppClass/App-class.htm
 
+        // Create a data connection and save the app.
+        // http://help.qlik.com/en-US/sense-developer/2.2/Subsystems/EngineAPI/Content/Classes/AppClass/App-class-CreateConnection-method.htm
         return app.createConnection({
             qType: 'internet',
             qName: 'MyWebConnection',
