@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '3.0.0';
+var VERSION = '3.0.1';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -1319,7 +1319,10 @@ GenericObject.prototype.getChildInfos = function() {
     });
 };
 GenericObject.prototype.createChild = function(Prop, PropForThis) {
-    return this.connection.ask(this.handle, 'CreateChild', arguments);
+    var connection = this.connection;
+    return this.connection.ask(this.handle, 'CreateChild', arguments).then(function(msg) {
+        return connection.create(msg.qReturn);
+    });
 };
 GenericObject.prototype.destroyChild = function(Id, PropForThis) {
     return this.connection.ask(this.handle, 'DestroyChild', arguments).then(function(msg) {
