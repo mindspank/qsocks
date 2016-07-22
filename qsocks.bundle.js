@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '3.0.1';
+var VERSION = '3.0.2';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -808,11 +808,7 @@ Doc.prototype.saveObjects = function() {
 Doc.prototype.unPublish = function() {
     return this.connection.ask(this.handle, 'UnPublish', arguments);
 };
-Doc.prototype.searchAssociations = function(Options, Terms, Page) {
-    return this.connection.ask(this.handle, 'SearchAssociations', arguments).then(function(msg) {
-        return msg.qResults;
-    });
-};
+
 Doc.prototype.searchSuggest = function(Options, Terms) {
     return this.connection.ask(this.handle, 'SearchSuggest', arguments).then(function(msg) {
         return msg.qResult;
@@ -889,6 +885,11 @@ Doc.prototype.searchObjects = function(qOptions, qTerm, qPage) {
        return msg.qResults; 
     });
 };
+Doc.prototype.searchResults = function(Options, Terms, Page) {
+    return this.connection.ask(this.handle, 'SearchResults', arguments).then(function(msg) {
+        return msg.qResults;
+    });
+};
 
 // Deprecated Methods
 Doc.prototype.getMediaList = function(Prop) {
@@ -902,6 +903,12 @@ Doc.prototype.getVariable = function(Name) {
 };
 Doc.prototype.removeVariable = function(Name) {
     return new Error('This method was deprecated in 2.1. Replaced with DestroyVariableById, DestroyVariableByName and DestroySessionVariable');
+};
+Doc.prototype.searchAssociations = function(Options, Terms, Page) {
+    console.log( 'This method is deprecated. Use SearchResults method instead.' )
+    return this.connection.ask(this.handle, 'SearchAssociations', arguments).then(function(msg) {
+        return msg.qResults;
+    });
 };
 module.exports = Doc;
 },{"events":13,"util":25}],3:[function(require,module,exports){
