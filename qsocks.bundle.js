@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '3.0.2';
+var VERSION = '3.0.3';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -882,12 +882,12 @@ Doc.prototype.evaluateEx = function(qExpression) {
 // New methods in 3.0
 Doc.prototype.searchObjects = function(qOptions, qTerm, qPage) {
     return this.connection.ask(this.handle, 'SearchObjects', arguments).then(function(msg) {
-       return msg.qResults; 
+       return msg.qResult; 
     });
 };
 Doc.prototype.searchResults = function(Options, Terms, Page) {
     return this.connection.ask(this.handle, 'SearchResults', arguments).then(function(msg) {
-        return msg.qResults;
+        return msg.qResult;
     });
 };
 

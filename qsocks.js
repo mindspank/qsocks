@@ -9,7 +9,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '3.0.2';
+var VERSION = '3.0.3';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
