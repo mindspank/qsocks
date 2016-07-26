@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '3.0.3';
+var VERSION = '3.0.4';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -659,7 +659,7 @@ Doc.prototype.deleteConnection = function(Id) {
 Doc.prototype.getConnection = function(Id) {
     return this.connection.ask(this.handle, 'GetConnection', arguments);
 };
-Doc.prototype.modifyConnection = function(Id, Name, ConnectionString, Type, OverrideCredentials, UserName, Password) {
+Doc.prototype.modifyConnection = function(qConnectionId, qConnection, qOverrideCredentials) {
     return this.connection.ask(this.handle, 'ModifyConnection', arguments);
 };
 Doc.prototype.getConnectionInfo = function(Connection) {
