@@ -11,8 +11,8 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '3.0.4';
-var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(process) === "[object process]";
+var VERSION = '3.0.5';
+var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(global.process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
 var WebSocket = global.WebSocket || global.MozWebSocket;
