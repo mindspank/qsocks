@@ -9,7 +9,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '3.0.5';
+var VERSION = '3.1.0';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(global.process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -136,6 +136,7 @@ function Connection(config) {
     var error = config ? config.error : null;
     var done = config ? config.done : null;
     var disconnect = config ? config.disconnect : null;
+    var IS_CONNECTED = false;
 
     var IS_SERVICE_CONNECTION = false;
     
@@ -208,6 +209,7 @@ function Connection(config) {
             };
             if (msg.method === "OnAuthenticationInformation" && !msg.params.mustAuthenticate) {
                 this.glob = new qsocks.Global(this, -1);
+                IS_CONNECTED = true;
                 done.call(this, this.glob);
             };
         };
@@ -253,6 +255,7 @@ function Connection(config) {
     this.ws.addEventListener('open', function open() {
         if ((host === 'localhost' && port === ':4848') || IS_SERVICE_CONNECTION) {
             this.glob = new qsocks.Global(this, -1);
+            IS_CONNECTED = true;
             done.call(this, this.glob);
         } else {
             this.ws.send(JSON.stringify({
@@ -266,8 +269,11 @@ function Connection(config) {
     }.bind(this));
 
     this.ws.addEventListener('error', function err(ev) {
-        if (error) {
-            error(ev.message)
+        if (this.ws.readyState === 1 && disconnect) {
+            disconnect(ev);
+        };
+        if (this.ws.readyState !== 1 && error) {
+            error(ev.message);
         } else {
             console.log(ev.message)
         }
@@ -275,7 +281,7 @@ function Connection(config) {
     }.bind(this));
 
     this.ws.addEventListener('close', function close(ev) {
-        if (!this.ws && disconnect) {
+        if (IS_CONNECTED && disconnect) {
             disconnect(ev);
         };
         this.ws = null;
