@@ -1,14 +1,16 @@
-#qsocks 
-####A lightweight promise wrapper around the Qlik Sense Engine API  
-
-
+# qsocks 
+#### A lightweight promise wrapper around the Qlik Sense Engine API  
 
 qsocks was born to provide a lightweight promise layer around the Engine API. Shortening the time to implemention without limiting the developer in what she or he can accomplish.
 
 The aim of qsocks is to mimic the functionality in the Engine API bringing the capabilities to node and the browser.   
 qsocks currently uses browserify to package up qsocks and promises to bring consistency to the browser landscape.
+  
+## Deprecation Notice - 2016-12-19  
+With the release of [enigma.js](https://github.com/qlik-oss/enigma.js) qsocks will be deprecated.  
+Support for new QIX methods will be provided for 12 months (2017-12-19) and after that support will end. 
 
-##Getting Started
+## Getting Started
 
 ### Installing
 ```
