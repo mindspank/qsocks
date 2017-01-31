@@ -11,7 +11,7 @@ var genericVariable = require('./lib/genericVariable');
 
 var Promise = require('promise');
 
-var VERSION = '3.1.0';
+var VERSION = '3.2.0';
 var IS_NODE = typeof process !== "undefined" && Object.prototype.toString.call(global.process) === "[object process]";
 
 // ws 1.0.1 breaks in browser. This will fallback to browser versions correctly
@@ -355,11 +355,6 @@ Doc.prototype.commitDraft = function(Id) {
 Doc.prototype.createDraft = function(Id) {
     return this.connection.ask(this.handle, 'CreateDraft', arguments).then(function(msg) {
         return msg.qSuccess;
-    });
-};
-Doc.prototype.getProperties = function() {
-    return this.connection.ask(this.handle, 'GetProperties', arguments).then(function(msg) {
-        return msg.qReturn;
     });
 };
 Doc.prototype.addFieldFromExpression = function(Name, Expression) {
@@ -1530,11 +1525,6 @@ Global.prototype.getAuthenticatedUser = function() {
         return msg.qReturn;
     });
 };
-Global.prototype.getStreamList = function() {
-    return this.connection.ask(this.handle, 'GetStreamList', arguments).then(function(msg) {
-        return msg.qStreamList;
-    });
-};
 Global.prototype.createDocEx = function(DocName, UserName, Password, Serial, LocalizedScriptMainSection) {
     var connection = this.connection;
     return this.connection.ask(this.handle, 'CreateDocEx', arguments).then(function(msg) {
@@ -1700,6 +1690,13 @@ Global.prototype.productVersion = function() {
     });
 };
 
+// New methods in 3.2
+Global.prototype.engineVersion = function() {
+    return this.connection.ask(this.handle, 'EngineVersion', arguments).then(function(msg) {
+        return msg.qReturn;
+    });
+};
+
 // Deprecated Methos
 Global.prototype.isPersonalMode = function() {
     return new Error('This method was removed in 2.0');
@@ -1709,6 +1706,11 @@ Global.prototype.replaceAppFromPath = function(TargetAppId, SrcAppId, Ids) {
 };
 Global.prototype.qvVersion = function() {
     return new Error('This method was removed in 2.0. Use ProductVersion method instead.');
+};
+Global.prototype.getStreamList = function() {
+    return this.connection.ask(this.handle, 'GetStreamList', arguments).then(function(msg) {
+        return msg.qStreamList;
+    });
 };
 
 module.exports = Global;
