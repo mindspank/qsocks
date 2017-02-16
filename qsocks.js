@@ -18,18 +18,20 @@ var WebSocket = global.WebSocket || global.MozWebSocket;
 if (IS_NODE) {
     try {
         WebSocket = require('ws');
-    } catch (e) { }
+    } catch (e) {}
 };
 
 if (IS_NODE) {
-    Object.defineProperty(Object.prototype, "hasOwnPropertyCI", {
-        "enumerable": false,
-        "value": function(keyName) {
-            return (Object.keys(this).map(function(v){
-                return v.toUpperCase()
-            }).indexOf(keyName.toUpperCase()) > -1)
-        }
-    });
+    if (!Object.prototype.hasOwnProperty("hasOwnPropertyCI")) {
+        Object.defineProperty(Object.prototype, "hasOwnPropertyCI", {
+            "enumerable": false,
+            "value": function (keyName) {
+                return (Object.keys(this).map(function (v) {
+                    return v.toUpperCase()
+                }).indexOf(keyName.toUpperCase()) > -1)
+            }
+        });
+    }
 };
 
 var qsocks = {
@@ -139,16 +141,16 @@ function Connection(config) {
     var IS_CONNECTED = false;
 
     var IS_SERVICE_CONNECTION = false;
-    
+
     if (config && config.host && IS_NODE) {
-        if ( config.headers.hasOwnPropertyCI('X-Qlik-User') ) {
+        if (config.headers.hasOwnPropertyCI('X-Qlik-User')) {
             IS_SERVICE_CONNECTION = true;
         };
     };
 
-    if ( IS_SERVICE_CONNECTION && (!config.cert && !config.key) ) {
-        if ( !config.pfx && !config.passphrase ) {
-            if ( error ) {
+    if (IS_SERVICE_CONNECTION && (!config.cert && !config.key)) {
+        if (!config.pfx && !config.passphrase) {
+            if (error) {
                 return error('Missing certificates for service connection')
             } else {
                 throw new Error('Missing certificates for service connection')
@@ -160,7 +162,7 @@ function Connection(config) {
     this.seqid = 0;
     this.pending = {};
     this.handles = {};
-    
+
     this.debug = config.debug;
     this.debugIsFunction = typeof this.debug === 'function';
 
@@ -191,8 +193,8 @@ function Connection(config) {
     this.ws.addEventListener('message', function message(ev) {
         var msg = JSON.parse(ev.data);
         if (this.debug) {
-            if( this.debugIsFunction ) {
-                this.debug('Incoming', msg);            
+            if (this.debugIsFunction) {
+                this.debug('Incoming', msg);
             } else {
                 console.log('Incoming', msg);
             }
@@ -220,8 +222,7 @@ function Connection(config) {
         if (pending) {
             if (pending.returnRaw) {
                 pending.resolve(msg)
-            }
-            else if (msg.result) {
+            } else if (msg.result) {
                 pending.resolve(msg.result);
             } else {
                 pending.reject(msg.error);
@@ -307,8 +308,8 @@ Connection.prototype.ask = function (handle, method, args, id) {
     };
 
     if (this.debug) {
-        if( this.debugIsFunction ) {
-            this.debug('Outgoing', request);            
+        if (this.debugIsFunction) {
+            this.debug('Outgoing', request);
         } else {
             console.log('Outgoing', request);
         }
